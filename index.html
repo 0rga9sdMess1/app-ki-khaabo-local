@@ -1,0 +1,543 @@
+<!--
+Ki Khaabo?
+Concept by BanRap
+
+CHANGELOG
+Ver.1.0.0.15.05.2026.00.45.00
+- Initial release of Ki Khaabo?
+- Added household meal intelligence engine
+- Added emotional and energy based recommendation system
+- Added lunch continuity logic
+- Added prep dependency logic
+- Added cozy Bengali-inspired UI
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ki Khaabo?</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #fff5e8, #ffe8d1);
+      min-height: 100vh;
+      color: #3d2c1e;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      padding: 20px;
+      padding-bottom: 90px;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 42px;
+      font-weight: bold;
+      margin-top: 25px;
+    }
+
+    .subtitle {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 16px;
+      opacity: 0.8;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.75);
+      border-radius: 22px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      backdrop-filter: blur(6px);
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 18px;
+      padding: 14px 18px;
+      background: #ffb36b;
+      color: #3d2c1e;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.2s;
+      flex: 1;
+      min-width: 120px;
+      font-weight: bold;
+    }
+
+    button:hover {
+      transform: scale(1.03);
+    }
+
+    .selected {
+      background: #ff7a00 !important;
+      color: white;
+    }
+
+    .recommendation {
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      margin-top: 15px;
+      border-left: 6px solid #ff8f2d;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .meal-name {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .meal-reason {
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+
+    .footer-left {
+      position: fixed;
+      bottom: 10px;
+      left: 15px;
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .footer-right {
+      position: fixed;
+      bottom: 10px;
+      right: 15px;
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .generate-btn {
+      width: 100%;
+      margin-top: 20px;
+      background: #ff7a00;
+      color: white;
+      font-size: 18px;
+      padding: 16px;
+    }
+
+    .emoji {
+      font-size: 24px;
+      margin-right: 8px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="title">Ki Khaabo?</div>
+
+  <div class="subtitle">
+    Tonight’s dinner companion 🍲<br>
+    Thoughtfully balancing comfort, health, leftovers and real life.
+  </div>
+
+  <div class="card">
+    <div class="section-title">Who’s checking dinner tonight?</div>
+
+    <div class="button-group">
+      <button onclick="selectUser(this, 'Pranab')">Pranab</button>
+      <button onclick="selectUser(this, 'Koyel')">Koyel</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">How’s today feeling?</div>
+
+    <div class="button-group">
+      <button onclick="selectMood(this, 'comfort')">Comfort</button>
+      <button onclick="selectMood(this, 'healthy')">Healthy</button>
+      <button onclick="selectMood(this, 'tired')">Low Energy</button>
+      <button onclick="selectMood(this, 'exciting')">Something Different</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Cooking energy?</div>
+
+    <div class="button-group">
+      <button onclick="selectEnergy(this, 'low')">Minimal</button>
+      <button onclick="selectEnergy(this, 'medium')">Moderate</button>
+      <button onclick="selectEnergy(this, 'high')">Can Cook Properly</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Tomorrow lunch needed?</div>
+
+    <div class="button-group">
+      <button onclick="selectLunch(this, true)">Yes</button>
+      <button onclick="selectLunch(this, false)">No</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Any prep already done?</div>
+
+    <div class="button-group">
+      <button onclick="togglePrep(this, 'rice')">Rice Cooked</button>
+      <button onclick="togglePrep(this, 'oats')">Oats Soaked</button>
+      <button onclick="togglePrep(this, 'chila')">Chila Batter Ready</button>
+    </div>
+  </div>
+
+  <button class="generate-btn" onclick="generateRecommendations()">
+    🍛 Tell Me What We Should Eat
+  </button>
+
+  <div id="results"></div>
+
+</div>
+
+<div class="footer-left">
+  Concept by BanRap
+</div>
+
+<div class="footer-right">
+  Ver.1.0.0.15.05.2026.00.45.00
+</div>
+
+<script>
+
+let selectedUser = "";
+let selectedMood = "";
+let selectedEnergy = "";
+let lunchNeeded = false;
+
+const prepState = {
+  rice: false,
+  oats: false,
+  chila: false
+};
+
+const meals = [
+
+{
+name: "Egg Fried Rice",
+comfort: 10,
+healthy: 5,
+energy: "medium",
+lunch: false,
+prep: "rice",
+reasons: [
+"Both emotionally love it",
+"Perfect one-time comfort meal",
+"Great for Friday evenings",
+"Rice prep already done"
+]
+},
+
+{
+name: "Moong Dal Chila",
+comfort: 8,
+healthy: 10,
+energy: "medium",
+lunch: true,
+prep: "chila",
+reasons: [
+"Healthy and protein rich",
+"Emotionally reliable for both",
+"Works beautifully for lunch box",
+"One of your healthiest shared meals"
+]
+},
+
+{
+name: "Bhindi Onion Sabzi + Fulka",
+comfort: 9,
+healthy: 7,
+energy: "medium",
+lunch: false,
+prep: "",
+reasons: [
+"Always a hit emotionally",
+"Pairs well with masoor dal",
+"Best enjoyed fresh at dinner",
+"Classic comfort dinner"
+]
+},
+
+{
+name: "Cauliflower Potato Dry Sabzi + Fulka",
+comfort: 9,
+healthy: 8,
+energy: "medium",
+lunch: true,
+prep: "",
+reasons: [
+"Strong lunch continuity meal",
+"Reliable comfort option",
+"Works beautifully with dal-rice next day",
+"Balanced and satisfying"
+]
+},
+
+{
+name: "Paneer Green Peas Light Gravy",
+comfort: 8,
+healthy: 7,
+energy: "medium",
+lunch: true,
+prep: "",
+reasons: [
+"Koyel loves this deeply",
+"Excellent lunch carry-over",
+"Comforting without being too heavy",
+"Pairs beautifully with rice next day"
+]
+},
+
+{
+name: "Cauliflower Green Peas Light Gravy",
+comfort: 9,
+healthy: 8,
+energy: "medium",
+lunch: true,
+prep: "",
+reasons: [
+"Excellent comfort meal",
+"Supports tomorrow lunch planning",
+"Works with both fulka and rice",
+"Emotionally safe dinner"
+]
+},
+
+{
+name: "Veg Pasta",
+comfort: 8,
+healthy: 5,
+energy: "high",
+lunch: true,
+prep: "",
+reasons: [
+"Made in large quantity",
+"Good lunchbox continuation",
+"Feels like a change from regular sabzi",
+"Comforting carb-heavy meal"
+]
+},
+
+{
+name: "Pasta Aglio e Olio",
+comfort: 9,
+healthy: 3,
+energy: "medium",
+lunch: false,
+prep: "",
+reasons: [
+"One-time special comfort meal",
+"Both genuinely love it",
+"Best enjoyed fresh",
+"Perfect for relaxed evenings"
+]
+},
+
+{
+name: "Veg Maggi",
+comfort: 10,
+healthy: 2,
+energy: "low",
+lunch: false,
+prep: "",
+reasons: [
+"Emotionally exhausted rescue meal",
+"Minimal effort required",
+"Warm and comforting",
+"Perfect for impossible evenings"
+]
+},
+
+{
+name: "Overnight Oats",
+comfort: 7,
+healthy: 10,
+energy: "low",
+lunch: false,
+prep: "oats",
+reasons: [
+"Healthy and emotionally safe",
+"Minimal morning stress",
+"Reliable breakfast planning",
+"Current favourite breakfast"
+]
+},
+
+{
+name: "Egg Curry + Fulka",
+comfort: 8,
+healthy: 8,
+energy: "medium",
+lunch: true,
+prep: "",
+reasons: [
+"Excellent next-day lunch support",
+"Protein-rich dinner",
+"Works beautifully with rice",
+"Comforting Bengali-style dinner"
+]
+},
+
+{
+name: "Uthappa",
+comfort: 8,
+healthy: 6,
+energy: "medium",
+lunch: false,
+prep: "",
+reasons: [
+"Fresh dinner-only comfort food",
+"Best enjoyed immediately",
+"Good variety option",
+"Feels different from regular meals"
+]
+},
+
+{
+name: "Lauki Kofta",
+comfort: 8,
+healthy: 7,
+energy: "high",
+lunch: true,
+prep: "",
+reasons: [
+"Koyel speciality emotional meal",
+"Weekend-worthy effort",
+"Rich and satisfying",
+"Feels special and homemade"
+]
+}
+
+];
+
+function clearSelections(group) {
+  group.forEach(btn => btn.classList.remove("selected"));
+}
+
+function selectUser(button, user) {
+  clearSelections(document.querySelectorAll(".card:nth-child(3) button"));
+  button.classList.add("selected");
+  selectedUser = user;
+}
+
+function selectMood(button, mood) {
+  clearSelections(document.querySelectorAll(".card:nth-child(4) button"));
+  button.classList.add("selected");
+  selectedMood = mood;
+}
+
+function selectEnergy(button, energy) {
+  clearSelections(document.querySelectorAll(".card:nth-child(5) button"));
+  button.classList.add("selected");
+  selectedEnergy = energy;
+}
+
+function selectLunch(button, value) {
+  clearSelections(document.querySelectorAll(".card:nth-child(6) button"));
+  button.classList.add("selected");
+  lunchNeeded = value;
+}
+
+function togglePrep(button, type) {
+  prepState[type] = !prepState[type];
+
+  if(prepState[type]) {
+    button.classList.add("selected");
+  } else {
+    button.classList.remove("selected");
+  }
+}
+
+function generateRecommendations() {
+
+  const results = document.getElementById("results");
+  results.innerHTML = "";
+
+  const today = new Date().getDay();
+
+  let scoredMeals = meals.map(meal => {
+
+    let score = 0;
+
+    if(selectedMood === "comfort") score += meal.comfort;
+    if(selectedMood === "healthy") score += meal.healthy;
+
+    if(selectedMood === "tired" && meal.energy === "low") score += 10;
+
+    if(selectedEnergy === meal.energy) score += 8;
+
+    if(lunchNeeded && meal.lunch) score += 10;
+
+    if(meal.prep && prepState[meal.prep]) score += 12;
+
+    if(today === 5 && !meal.lunch) score += 5;
+
+    if(today === 0 && meal.lunch) score += 6;
+
+    return {
+      ...meal,
+      score
+    };
+
+  });
+
+  scoredMeals.sort((a,b) => b.score - a.score);
+
+  const topMeals = scoredMeals.slice(0,3);
+
+  topMeals.forEach((meal, index) => {
+
+    const div = document.createElement("div");
+    div.className = "recommendation";
+
+    div.innerHTML = `
+      <div class="meal-name">
+        ${index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"} ${meal.name}
+      </div>
+
+      <div class="meal-reason">
+        ${meal.reasons.map(r => `• ${r}`).join("<br>")}
+      </div>
+    `;
+
+    results.appendChild(div);
+
+  });
+
+}
+
+</script>
+
+</body>
+</html>
