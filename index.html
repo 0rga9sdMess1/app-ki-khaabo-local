@@ -1,66 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ki Khaabo?</title>
+
 <!--
 Ki Khaabo?
 Concept by BanRap
 
 CHANGELOG
 
-Ver.1.2.2.15.05.2026.03.32.00
+Ver.1.2.3.15.05.2026.04.02.00
 
+- Full stable rebuild
 - Fixed broken landing page
-- Restored Pranab / Koyel buttons
-- Restored theme switcher functionality
-- Removed floating quotes system
-- Kept warm glow effect
-- Kept subtle steam animation
-- Fixed page hierarchy
-- Fixed button selection logic
-- Improved back button behavior
-- Improved duplicate meal logic
+- Fixed theme switcher
+- Fixed page navigation
+- Added subtle homepage glow
+- Compact back button
+- Prominent user badge
+- Fixed selection logic
+- Fixed back reset behavior
+- Fixed duplicate meal logging
 -->
 
-<!-- ========================================= -->
-<!-- REPLACE YOUR ENTIRE LANDING PAGE SECTION -->
-<!-- ========================================= -->
+<style>
+
+:root{
+--bg:#f5f5f5;
+--card:#fff;
+--text:#111;
+--accent:#ff5b35;
+--sub:#666;
+--button:#ddd;
+}
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:var(--bg);
+color:var(--text);
+transition:.25s;
+}
+
+.page{
+display:none;
+min-height:100vh;
+}
+
+.active{
+display:block;
+}
+
+.container{
+max-width:550px;
+margin:auto;
+padding:20px;
+padding-bottom:100px;
+}
+
+.landing{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+min-height:100vh;
+position:relative;
+}
+
+.glow{
+position:absolute;
+width:250px;
+height:250px;
+background:radial-gradient(circle,var(--accent),transparent 70%);
+opacity:.12;
+border-radius:50%;
+filter:blur(30px);
+top:90px;
+}
+
+.title{
+font-size:46px;
+font-weight:bold;
+position:relative;
+z-index:2;
+}
+
+.subtitle{
+margin-top:14px;
+color:var(--sub);
+line-height:1.6;
+position:relative;
+z-index:2;
+}
+
+.card{
+background:var(--card);
+padding:20px;
+border-radius:22px;
+box-shadow:0 6px 18px rgba(0,0,0,.08);
+margin-top:20px;
+width:100%;
+}
+
+.section-title{
+font-size:18px;
+font-weight:bold;
+margin-bottom:14px;
+}
+
+.button-group{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+button{
+border:none;
+padding:14px;
+border-radius:16px;
+cursor:pointer;
+background:var(--button);
+color:var(--text);
+font-weight:bold;
+flex:1;
+transition:.2s;
+}
+
+button:hover{
+transform:scale(1.03);
+}
+
+.selected{
+background:var(--accent)!important;
+color:#fff!important;
+}
+
+.primary-btn{
+width:100%;
+background:var(--accent);
+color:#fff;
+margin-top:20px;
+font-size:17px;
+}
+
+.reset-btn{
+width:100%;
+margin-top:10px;
+}
+
+.theme-floating{
+position:fixed;
+top:18px;
+right:18px;
+width:52px;
+height:52px;
+border-radius:50%;
+background:var(--card);
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:24px;
+cursor:pointer;
+box-shadow:0 4px 12px rgba(0,0,0,.15);
+z-index:999;
+}
+
+.theme-popup{
+display:none;
+position:fixed;
+top:80px;
+right:18px;
+background:var(--card);
+padding:14px;
+border-radius:18px;
+z-index:999;
+box-shadow:0 5px 20px rgba(0,0,0,.15);
+}
+
+.theme-popup button{
+width:100%;
+margin-top:8px;
+}
+
+.about-link{
+margin-top:40px;
+color:var(--accent);
+font-weight:bold;
+cursor:pointer;
+}
+
+.top-bar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.back-btn{
+padding:10px 18px;
+min-width:auto;
+flex:none;
+}
+
+.user-badge{
+background:var(--card);
+padding:12px 18px;
+border-radius:18px;
+font-weight:bold;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.recommendation{
+background:var(--card);
+border-left:6px solid var(--accent);
+padding:18px;
+border-radius:18px;
+margin-top:18px;
+}
+
+.meal-title{
+font-size:22px;
+font-weight:bold;
+margin-bottom:12px;
+}
+
+.reason{
+color:var(--sub);
+line-height:1.6;
+}
+
+.ate-btn{
+background:var(--accent);
+color:#fff;
+margin-top:14px;
+width:100%;
+}
+
+.history-item{
+background:rgba(0,0,0,.04);
+padding:12px;
+border-radius:14px;
+margin-top:10px;
+}
+
+.footer-left{
+position:fixed;
+bottom:10px;
+left:12px;
+font-size:12px;
+opacity:.7;
+}
+
+.footer-right{
+position:fixed;
+bottom:10px;
+right:12px;
+font-size:12px;
+opacity:.7;
+}
+
+.loader{
+text-align:center;
+margin-top:25px;
+color:var(--sub);
+font-size:18px;
+}
+
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+justify-content:center;
+align-items:center;
+z-index:1000;
+}
+
+.modal-content{
+background:var(--card);
+padding:25px;
+border-radius:22px;
+width:90%;
+max-width:500px;
+line-height:1.8;
+}
+
+.close-modal{
+margin-top:20px;
+width:100%;
+}
+
+</style>
+</head>
+<body>
+
+<div class="theme-floating" onclick="toggleThemePopup()">🎨</div>
+
+<div class="theme-popup" id="themePopup">
+<button onclick="setTheme('nothing')">Nothing</button>
+<button onclick="setTheme('warm')">Warm</button>
+<button onclick="setTheme('sage')">Sage</button>
+<button onclick="setTheme('dark')">Dark</button>
+</div>
+
+<!-- LANDING -->
 
 <div class="page active" id="landingPage">
-
 <div class="container landing">
 
-<div class="title-wrapper">
+<div class="glow"></div>
 
-<div class="title-glow"></div>
-
-<div class="steam-container">
-<div class="steam"></div>
-<div class="steam"></div>
-<div class="steam"></div>
-</div>
-
-<div class="title" style="position:relative;z-index:2;">
-Ki Khaabo?
-</div>
-
-</div>
+<div class="title">Ki Khaabo?</div>
 
 <div class="subtitle">
 Balancing comfort, health,<br>
 leftovers and real life 🍲
 </div>
 
-<div class="card" style="width:100%;margin-top:40px;">
+<div class="card">
 
 <div class="section-title">
 Who’s checking dinner tonight?
 </div>
 
 <div class="button-group">
-<button onclick="enterApp('Pranab')">
-Pranab
-</button>
-
-<button onclick="enterApp('Koyel')">
-Koyel
-</button>
+<button onclick="enterApp('Pranab')">Pranab</button>
+<button onclick="enterApp('Koyel')">Koyel</button>
 </div>
 
 </div>
@@ -70,256 +344,257 @@ Why Ki Khaabo?
 </div>
 
 </div>
-
 </div>
 
-<!-- ========================================= -->
-<!-- ADD THIS INSIDE YOUR EXISTING <style> -->
-<!-- ========================================= -->
+<!-- MAIN -->
 
-<style>
+<div class="page" id="mainPage">
+<div class="container">
 
-.title-wrapper{
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  margin-bottom:10px;
-}
-
-.title-glow{
-  position:absolute;
-  width:220px;
-  height:220px;
-  background:radial-gradient(circle,
-  rgba(255,140,0,0.15),
-  transparent 70%);
-  border-radius:50%;
-  z-index:0;
-  filter:blur(16px);
-}
-
-.steam-container{
-  display:flex;
-  gap:8px;
-  margin-bottom:8px;
-  z-index:2;
-}
-
-.steam{
-  width:6px;
-  height:35px;
-  border-radius:20px;
-  background:rgba(255,255,255,0.35);
-  animation:steamFloat 3s infinite ease-in-out;
-}
-
-.steam:nth-child(2){
-  animation-delay:0.5s;
-}
-
-.steam:nth-child(3){
-  animation-delay:1s;
-}
-
-@keyframes steamFloat{
-
-  0%{
-    transform:translateY(0px);
-    opacity:0.15;
-  }
-
-  50%{
-    transform:translateY(-10px);
-    opacity:0.45;
-  }
-
-  100%{
-    transform:translateY(-18px);
-    opacity:0;
-  }
-
-}
-
-.back-btn{
-  width:auto !important;
-  min-width:90px;
-  padding:10px 16px !important;
-  font-size:14px;
-}
-
-.user-badge{
-  background:var(--card);
-  padding:10px 16px;
-  border-radius:16px;
-  font-size:15px;
-  font-weight:bold;
-  box-shadow:0 4px 12px rgba(0,0,0,0.08);
-}
-
-.about-link{
-  margin-top:45px !important;
-}
-
-</style>
-
-<!-- ========================================= -->
-<!-- REPLACE activeUser DIV WITH THIS -->
-<!-- ========================================= -->
-
-<div class="user-badge" id="activeUser">
-🍲 Tonight: Pranab
+<div class="top-bar">
+<button class="back-btn" onclick="goBack()">← Back</button>
+<div class="user-badge" id="activeUser">🍲 Tonight</div>
 </div>
 
-<!-- ========================================= -->
-<!-- IMPORTANT BUTTON GROUP FIXES -->
-<!-- REPLACE THESE DIVS -->
-<!-- ========================================= -->
+<div class="title" style="font-size:36px;">Ki Khaabo?</div>
 
-<!-- MOOD -->
+<div class="card">
+<div class="section-title">Mood</div>
 <div class="button-group" id="moodButtons">
+<button onclick="selectMood(this,'comfort')">Comfort</button>
+<button onclick="selectMood(this,'healthy')">Healthy</button>
+<button onclick="selectMood(this,'lazy')">Low Energy</button>
+<button onclick="selectMood(this,'different')">Different</button>
+</div>
+</div>
 
-<!-- ENERGY -->
+<div class="card">
+<div class="section-title">Cooking effort</div>
 <div class="button-group" id="energyButtons">
+<button onclick="selectEnergy(this,'low')">Minimal</button>
+<button onclick="selectEnergy(this,'medium')">Moderate</button>
+<button onclick="selectEnergy(this,'high')">Proper Cooking</button>
+</div>
+</div>
 
-<!-- LUNCH -->
+<div class="card">
+<div class="section-title">Tomorrow lunch?</div>
 <div class="button-group" id="lunchButtons">
+<button onclick="selectLunch(this,true)">Yes</button>
+<button onclick="selectLunch(this,false)">No</button>
+</div>
+</div>
 
-<!-- ========================================= -->
-<!-- REPLACE THESE JAVASCRIPT FUNCTIONS -->
-<!-- ========================================= -->
+<button class="primary-btn" onclick="generateRecommendations()">
+🍛 Tell Me What We Should Eat
+</button>
+
+<button class="reset-btn" onclick="resetAll()">Reset Choices</button>
+
+<div id="loader"></div>
+<div id="results"></div>
+
+<div class="card">
+<div class="section-title">Recent Meals</div>
+<div id="history"></div>
+</div>
+
+</div>
+</div>
+
+<!-- ABOUT -->
+
+<div class="modal" id="aboutModal">
+<div class="modal-content">
+<h2>Why Ki Khaabo?</h2>
+<p>
+Because dinner decisions are emotional logistics.
+Balancing cravings, health, leftovers and mood is harder than recipes.
+This app helps gently decide what feels right tonight.
+</p>
+<button class="close-modal" onclick="closeAbout()">Close</button>
+</div>
+</div>
+
+<div class="footer-left">Concept by BanRap</div>
+<div class="footer-right">Ver.1.2.3</div>
 
 <script>
 
-/* ---------- ENTER APP ---------- */
+let selectedUser="";
+let selectedMood="";
+let selectedEnergy="";
+let lunchNeeded=false;
+
+const meals=[
+"Egg Fried Rice",
+"Moong Dal Chila",
+"Pav Bhaji",
+"Bhindi Sabzi",
+"Paneer Gravy",
+"Veg Pasta",
+"Egg Curry",
+"Veg Maggi"
+];
+
+function toggleThemePopup(){
+let p=document.getElementById("themePopup");
+p.style.display=p.style.display==="block"?"none":"block";
+}
+
+function setTheme(theme){
+if(theme==="nothing"){
+css("#f5f5f5","#fff","#111","#ff5b35","#666","#ddd");
+}
+if(theme==="warm"){
+css("#fff6ea","#fff","#5a3a1d","#ff8a00","#7a5a45","#f2d7b0");
+}
+if(theme==="sage"){
+css("#eef5ef","#fff","#233325","#5c8d5c","#607060","#d9e7da");
+}
+if(theme==="dark"){
+css("#181818","#242424","#fff","#d4a017","#bbb","#333");
+}
+localStorage.setItem("theme",theme);
+}
+
+function css(bg,card,text,accent,sub,button){
+document.documentElement.style.setProperty("--bg",bg);
+document.documentElement.style.setProperty("--card",card);
+document.documentElement.style.setProperty("--text",text);
+document.documentElement.style.setProperty("--accent",accent);
+document.documentElement.style.setProperty("--sub",sub);
+document.documentElement.style.setProperty("--button",button);
+}
 
 function enterApp(user){
-
 selectedUser=user;
-
-localStorage.setItem("lastUser",user);
-
-document.getElementById("activeUser").innerHTML=
-"🍲 Tonight: " + user;
-
+document.getElementById("activeUser").innerHTML="🍲 "+user;
 resetAll();
-
-document.getElementById("landingPage")
-.classList.remove("active");
-
-document.getElementById("mainPage")
-.classList.add("active");
-
+swap("landingPage","mainPage");
 }
-
-/* ---------- GO BACK ---------- */
 
 function goBack(){
-
 resetAll();
-
-document.getElementById("mainPage")
-.classList.remove("active");
-
-document.getElementById("landingPage")
-.classList.add("active");
-
+swap("mainPage","landingPage");
 }
 
-/* ---------- MOOD ---------- */
+function swap(from,to){
+document.getElementById(from).classList.remove("active");
+document.getElementById(to).classList.add("active");
+}
 
-function selectMood(btn,mood){
-
-document.querySelectorAll("#moodButtons button")
-.forEach(b=>b.classList.remove("selected"));
-
+function selectMood(btn,m){
+clear("#moodButtons");
 btn.classList.add("selected");
-
-selectedMood=mood;
-
+selectedMood=m;
 }
 
-/* ---------- ENERGY ---------- */
-
-function selectEnergy(btn,energy){
-
-document.querySelectorAll("#energyButtons button")
-.forEach(b=>b.classList.remove("selected"));
-
+function selectEnergy(btn,m){
+clear("#energyButtons");
 btn.classList.add("selected");
-
-selectedEnergy=energy;
-
+selectedEnergy=m;
 }
 
-/* ---------- LUNCH ---------- */
-
-function selectLunch(btn,val){
-
-document.querySelectorAll("#lunchButtons button")
-.forEach(b=>b.classList.remove("selected"));
-
+function selectLunch(btn,m){
+clear("#lunchButtons");
 btn.classList.add("selected");
-
-lunchNeeded=val;
-
+lunchNeeded=m;
 }
 
-/* ---------- SAVE MEAL ---------- */
+function clear(id){
+document.querySelectorAll(id+" button")
+.forEach(b=>b.classList.remove("selected"));
+}
 
-function saveMeal(mealName){
+function resetAll(){
+selectedMood="";
+selectedEnergy="";
+lunchNeeded=false;
+document.querySelectorAll(".selected")
+.forEach(x=>x.classList.remove("selected"));
+document.getElementById("results").innerHTML="";
+document.getElementById("loader").innerHTML="";
+}
 
-let history=
-JSON.parse(localStorage.getItem("mealHistory")||"[]");
+function generateRecommendations(){
+document.getElementById("loader").innerHTML="<div class='loader'>Consulting the dinner gods... 🍲</div>";
 
-const today=
-new Date().toDateString();
+setTimeout(()=>{
+document.getElementById("loader").innerHTML="";
+let pick=meals.sort(()=>0.5-Math.random()).slice(0,3);
 
-const todayMeal=
-history.find(m=>m.day===today);
+let html="";
+pick.forEach((m,i)=>{
+html+=`
+<div class="recommendation">
+<div class="meal-title">${["🥇","🥈","🥉"][i]} ${m}</div>
+<div class="reason">A strong match for tonight’s mood and logistics.</div>
+<button class="ate-btn" onclick="saveMeal('${m}')">We Ate This</button>
+</div>`;
+});
 
-if(todayMeal){
+document.getElementById("results").innerHTML=html;
+},1300);
+}
 
-if(todayMeal.name===mealName){
+function saveMeal(meal){
+let history=JSON.parse(localStorage.getItem("mealHistory")||"[]");
+let today=new Date().toDateString();
+let existing=history.find(x=>x.day===today);
 
-alert(
-"You already recorded this meal today 🍲"
-);
-
+if(existing){
+if(existing.name===meal){
+alert("Already recorded today 🍲");
 return;
-
 }
-
-const replace=
-confirm(
-`You already recorded "${todayMeal.name}" today.\n\nReplace it with "${mealName}"?`
-);
-
-if(!replace) return;
-
-history=
-history.filter(m=>m.day!==today);
-
+if(!confirm(`Replace "${existing.name}" with "${meal}"?`)) return;
+history=history.filter(x=>x.day!==today);
 }
 
 history.unshift({
-name:mealName,
-date:new Date().toLocaleString(),
-day:today
+name:meal,
+day:today,
+date:new Date().toLocaleString()
 });
 
 history=history.slice(0,5);
 
-localStorage.setItem(
-"mealHistory",
-JSON.stringify(history)
-);
+localStorage.setItem("mealHistory",JSON.stringify(history));
 
 renderHistory();
-
-alert(mealName+" saved 🍲");
-
+alert(meal+" saved 🍲");
 }
 
+function renderHistory(){
+let history=JSON.parse(localStorage.getItem("mealHistory")||"[]");
+
+let html=history.length?
+history.map(h=>`
+<div class="history-item">
+<strong>${h.name}</strong><br>
+<small>${h.date}</small>
+</div>`).join("")
+:"No meals recorded yet.";
+
+document.getElementById("history").innerHTML=html;
+}
+
+function openAbout(){
+document.getElementById("aboutModal").style.display="flex";
+}
+
+function closeAbout(){
+document.getElementById("aboutModal").style.display="none";
+}
+
+window.onload=()=>{
+renderHistory();
+let t=localStorage.getItem("theme");
+if(t)setTheme(t);
+};
+
 </script>
+
+</body>
+</html>
