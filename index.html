@@ -3,539 +3,714 @@ Ki Khaabo?
 Concept by BanRap
 
 CHANGELOG
-Ver.1.0.0.15.05.2026.00.45.00
-- Initial release of Ki Khaabo?
-- Added household meal intelligence engine
-- Added emotional and energy based recommendation system
-- Added lunch continuity logic
-- Added prep dependency logic
-- Added cozy Bengali-inspired UI
 
+Ver.1.1.0.15.05.2026.01.35.00
+- Added intelligent meal memory system
+- Added anti-repetition recommendation engine
+- Added "We Ate This" tracking
+- Added recent meals history panel
+- Added reset selections button
+- Added multi-theme engine
+- Added About Ki Khaabo section
+- Improved scoring logic and UI polish
+
+Ver.1.0.0.15.05.2026.00.45.00
+- Initial release
 -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ki Khaabo?</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
+<title>Ki Khaabo?</title>
 
-    body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(to bottom, #fff5e8, #ffe8d1);
-      min-height: 100vh;
-      color: #3d2c1e;
-    }
+<style>
 
-    .container {
-      max-width: 500px;
-      margin: auto;
-      padding: 20px;
-      padding-bottom: 90px;
-    }
+:root{
+  --bg:#f5f5f5;
+  --card:#ffffff;
+  --text:#111111;
+  --accent:#ff3b30;
+  --sub:#666666;
+}
 
-    .title {
-      text-align: center;
-      font-size: 42px;
-      font-weight: bold;
-      margin-top: 25px;
-    }
+body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+  transition:0.3s;
+}
 
-    .subtitle {
-      text-align: center;
-      margin-top: 10px;
-      font-size: 16px;
-      opacity: 0.8;
-      line-height: 1.5;
-    }
+.container{
+  max-width:550px;
+  margin:auto;
+  padding:20px;
+  padding-bottom:100px;
+}
 
-    .card {
-      background: rgba(255,255,255,0.75);
-      border-radius: 22px;
-      padding: 20px;
-      margin-top: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-      backdrop-filter: blur(6px);
-    }
+.title{
+  text-align:center;
+  font-size:42px;
+  font-weight:bold;
+  margin-top:25px;
+}
 
-    .section-title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 15px;
-    }
+.subtitle{
+  text-align:center;
+  color:var(--sub);
+  margin-top:10px;
+  line-height:1.6;
+}
 
-    .button-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+.card{
+  background:var(--card);
+  border-radius:22px;
+  padding:20px;
+  margin-top:18px;
+  box-shadow:0 5px 18px rgba(0,0,0,0.08);
+}
 
-    button {
-      border: none;
-      border-radius: 18px;
-      padding: 14px 18px;
-      background: #ffb36b;
-      color: #3d2c1e;
-      font-size: 15px;
-      cursor: pointer;
-      transition: 0.2s;
-      flex: 1;
-      min-width: 120px;
-      font-weight: bold;
-    }
+.section-title{
+  font-size:19px;
+  font-weight:bold;
+  margin-bottom:14px;
+}
 
-    button:hover {
-      transform: scale(1.03);
-    }
+.button-group{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
 
-    .selected {
-      background: #ff7a00 !important;
-      color: white;
-    }
+button{
+  border:none;
+  padding:14px;
+  border-radius:16px;
+  background:#dddddd;
+  color:var(--text);
+  cursor:pointer;
+  font-size:15px;
+  transition:0.2s;
+  flex:1;
+  min-width:120px;
+  font-weight:bold;
+}
 
-    .recommendation {
-      background: white;
-      border-radius: 18px;
-      padding: 18px;
-      margin-top: 15px;
-      border-left: 6px solid #ff8f2d;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    }
+button:hover{
+  transform:scale(1.03);
+}
 
-    .meal-name {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
+.selected{
+  background:var(--accent)!important;
+  color:white!important;
+}
 
-    .meal-reason {
-      line-height: 1.6;
-      opacity: 0.9;
-    }
+.primary-btn{
+  width:100%;
+  background:var(--accent);
+  color:white;
+  font-size:18px;
+  padding:16px;
+  margin-top:20px;
+}
 
-    .footer-left {
-      position: fixed;
-      bottom: 10px;
-      left: 15px;
-      font-size: 12px;
-      opacity: 0.7;
-    }
+.reset-btn{
+  width:100%;
+  margin-top:10px;
+}
 
-    .footer-right {
-      position: fixed;
-      bottom: 10px;
-      right: 15px;
-      font-size: 12px;
-      opacity: 0.7;
-    }
+.recommendation{
+  background:var(--card);
+  border-left:6px solid var(--accent);
+  border-radius:18px;
+  padding:18px;
+  margin-top:18px;
+}
 
-    .generate-btn {
-      width: 100%;
-      margin-top: 20px;
-      background: #ff7a00;
-      color: white;
-      font-size: 18px;
-      padding: 16px;
-    }
+.meal-title{
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:12px;
+}
 
-    .emoji {
-      font-size: 24px;
-      margin-right: 8px;
-    }
+.reason{
+  line-height:1.6;
+  color:var(--sub);
+}
 
-  </style>
+.ate-btn{
+  margin-top:15px;
+  background:var(--accent);
+  color:white;
+}
+
+.history-item{
+  background:rgba(0,0,0,0.04);
+  padding:12px;
+  border-radius:12px;
+  margin-top:10px;
+}
+
+.footer-left{
+  position:fixed;
+  bottom:10px;
+  left:12px;
+  font-size:12px;
+  opacity:0.7;
+}
+
+.footer-right{
+  position:fixed;
+  bottom:10px;
+  right:12px;
+  font-size:12px;
+  opacity:0.7;
+}
+
+.about-text{
+  line-height:1.8;
+  color:var(--sub);
+}
+
+.theme-selector{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.theme-btn{
+  padding:12px;
+}
+
+</style>
 </head>
 
 <body>
 
 <div class="container">
 
-  <div class="title">Ki Khaabo?</div>
+<div class="title">Ki Khaabo?</div>
 
-  <div class="subtitle">
-    Tonight’s dinner companion 🍲<br>
-    Thoughtfully balancing comfort, health, leftovers and real life.
-  </div>
+<div class="subtitle">
+Tonight’s dinner companion 🍲<br>
+Balancing comfort, health, leftovers and real life.
+</div>
 
-  <div class="card">
-    <div class="section-title">Who’s checking dinner tonight?</div>
+<div class="card">
+<div class="section-title">Choose Theme</div>
 
-    <div class="button-group">
-      <button onclick="selectUser(this, 'Pranab')">Pranab</button>
-      <button onclick="selectUser(this, 'Koyel')">Koyel</button>
-    </div>
-  </div>
+<div class="theme-selector">
+<button class="theme-btn" onclick="setTheme('nothing')">Nothing Minimal</button>
+<button class="theme-btn" onclick="setTheme('warm')">Cozy Bengali</button>
+<button class="theme-btn" onclick="setTheme('sage')">Sage Calm</button>
+<button class="theme-btn" onclick="setTheme('dark')">Dark Dinner</button>
+</div>
+</div>
 
-  <div class="card">
-    <div class="section-title">How’s today feeling?</div>
+<div class="card">
+<div class="section-title">Who’s checking dinner tonight?</div>
 
-    <div class="button-group">
-      <button onclick="selectMood(this, 'comfort')">Comfort</button>
-      <button onclick="selectMood(this, 'healthy')">Healthy</button>
-      <button onclick="selectMood(this, 'tired')">Low Energy</button>
-      <button onclick="selectMood(this, 'exciting')">Something Different</button>
-    </div>
-  </div>
+<div class="button-group">
+<button onclick="selectUser(this,'Pranab')">Pranab</button>
+<button onclick="selectUser(this,'Koyel')">Koyel</button>
+</div>
+</div>
 
-  <div class="card">
-    <div class="section-title">Cooking energy?</div>
+<div class="card">
+<div class="section-title">How’s today feeling?</div>
 
-    <div class="button-group">
-      <button onclick="selectEnergy(this, 'low')">Minimal</button>
-      <button onclick="selectEnergy(this, 'medium')">Moderate</button>
-      <button onclick="selectEnergy(this, 'high')">Can Cook Properly</button>
-    </div>
-  </div>
+<div class="button-group">
+<button onclick="selectMood(this,'comfort')">Comfort</button>
+<button onclick="selectMood(this,'healthy')">Healthy</button>
+<button onclick="selectMood(this,'tired')">Low Energy</button>
+<button onclick="selectMood(this,'exciting')">Something Different</button>
+</div>
+</div>
 
-  <div class="card">
-    <div class="section-title">Tomorrow lunch needed?</div>
+<div class="card">
+<div class="section-title">Cooking energy?</div>
 
-    <div class="button-group">
-      <button onclick="selectLunch(this, true)">Yes</button>
-      <button onclick="selectLunch(this, false)">No</button>
-    </div>
-  </div>
+<div class="button-group">
+<button onclick="selectEnergy(this,'low')">Minimal</button>
+<button onclick="selectEnergy(this,'medium')">Moderate</button>
+<button onclick="selectEnergy(this,'high')">Can Cook Properly</button>
+</div>
+</div>
 
-  <div class="card">
-    <div class="section-title">Any prep already done?</div>
+<div class="card">
+<div class="section-title">Tomorrow lunch needed?</div>
 
-    <div class="button-group">
-      <button onclick="togglePrep(this, 'rice')">Rice Cooked</button>
-      <button onclick="togglePrep(this, 'oats')">Oats Soaked</button>
-      <button onclick="togglePrep(this, 'chila')">Chila Batter Ready</button>
-    </div>
-  </div>
+<div class="button-group">
+<button onclick="selectLunch(this,true)">Yes</button>
+<button onclick="selectLunch(this,false)">No</button>
+</div>
+</div>
 
-  <button class="generate-btn" onclick="generateRecommendations()">
-    🍛 Tell Me What We Should Eat
-  </button>
+<div class="card">
+<div class="section-title">Any prep already done?</div>
 
-  <div id="results"></div>
+<div class="button-group">
+<button onclick="togglePrep(this,'rice')">Rice Cooked</button>
+<button onclick="togglePrep(this,'oats')">Oats Soaked</button>
+<button onclick="togglePrep(this,'chila')">Chila Batter Ready</button>
+</div>
+</div>
+
+<button class="primary-btn" onclick="generateRecommendations()">
+🍛 Tell Me What We Should Eat
+</button>
+
+<button class="reset-btn" onclick="resetAll()">
+Reset Choices
+</button>
+
+<div id="results"></div>
+
+<div class="card">
+<div class="section-title">Recent Meals</div>
+<div id="history"></div>
+</div>
+
+<div class="card">
+<div class="section-title">🍲 Why Ki Khaabo Exists</div>
+
+<div class="about-text">
+Some nights you want comfort.<br><br>
+
+Some nights you want health.<br><br>
+
+Some nights you just want Maggi and silence.<br><br>
+
+Ki Khaabo? was born from real dinner table confusion:
+“What should we eat tonight?”
+“Will this survive tomorrow lunch?”
+“Didn’t we just have paneer yesterday?”<br><br>
+
+Between work, tiredness, moods, leftovers and cravings, food becomes less about recipes and more about emotional logistics.<br><br>
+
+This app tries to help with that gently.
+</div>
+</div>
 
 </div>
 
 <div class="footer-left">
-  Concept by BanRap
+Concept by BanRap
 </div>
 
 <div class="footer-right">
-  Ver.1.0.0.15.05.2026.00.45.00
+Ver.1.1.0.15.05.2026.01.35.00
 </div>
 
 <script>
 
-let selectedUser = "";
-let selectedMood = "";
-let selectedEnergy = "";
-let lunchNeeded = false;
+let selectedUser="";
+let selectedMood="";
+let selectedEnergy="";
+let lunchNeeded=false;
 
-const prepState = {
-  rice: false,
-  oats: false,
-  chila: false
+const prepState={
+rice:false,
+oats:false,
+chila:false
 };
 
-const meals = [
+const meals=[
 
 {
-name: "Egg Fried Rice",
-comfort: 10,
-healthy: 5,
-energy: "medium",
-lunch: false,
-prep: "rice",
-reasons: [
+name:"Egg Fried Rice",
+comfort:10,
+healthy:5,
+energy:"medium",
+lunch:false,
+prep:"rice",
+reasons:[
 "Both emotionally love it",
-"Perfect one-time comfort meal",
+"Perfect comfort meal",
 "Great for Friday evenings",
 "Rice prep already done"
 ]
 },
 
 {
-name: "Moong Dal Chila",
-comfort: 8,
-healthy: 10,
-energy: "medium",
-lunch: true,
-prep: "chila",
-reasons: [
+name:"Moong Dal Chila",
+comfort:8,
+healthy:10,
+energy:"medium",
+lunch:true,
+prep:"chila",
+reasons:[
 "Healthy and protein rich",
-"Emotionally reliable for both",
-"Works beautifully for lunch box",
-"One of your healthiest shared meals"
+"Excellent lunchbox support",
+"Emotionally reliable meal",
+"Fresh and satisfying"
 ]
 },
 
 {
-name: "Bhindi Onion Sabzi + Fulka",
-comfort: 9,
-healthy: 7,
-energy: "medium",
-lunch: false,
-prep: "",
-reasons: [
-"Always a hit emotionally",
-"Pairs well with masoor dal",
-"Best enjoyed fresh at dinner",
+name:"Bhindi Onion Sabzi + Fulka",
+comfort:9,
+healthy:7,
+energy:"medium",
+lunch:false,
+prep:"",
+reasons:[
+"Always emotionally satisfying",
+"Pairs beautifully with masoor dal",
+"Best enjoyed fresh",
 "Classic comfort dinner"
 ]
 },
 
 {
-name: "Cauliflower Potato Dry Sabzi + Fulka",
-comfort: 9,
-healthy: 8,
-energy: "medium",
-lunch: true,
-prep: "",
-reasons: [
-"Strong lunch continuity meal",
-"Reliable comfort option",
-"Works beautifully with dal-rice next day",
-"Balanced and satisfying"
+name:"Cauliflower Potato Dry Sabzi + Fulka",
+comfort:9,
+healthy:8,
+energy:"medium",
+lunch:true,
+prep:"",
+reasons:[
+"Strong lunch continuity",
+"Balanced comfort food",
+"Works with dal-rice next day",
+"Reliable household favourite"
 ]
 },
 
 {
-name: "Paneer Green Peas Light Gravy",
-comfort: 8,
-healthy: 7,
-energy: "medium",
-lunch: true,
-prep: "",
-reasons: [
-"Koyel loves this deeply",
-"Excellent lunch carry-over",
-"Comforting without being too heavy",
-"Pairs beautifully with rice next day"
+name:"Paneer Green Peas Light Gravy",
+comfort:8,
+healthy:7,
+energy:"medium",
+lunch:true,
+prep:"",
+reasons:[
+"Koyel comfort favourite",
+"Excellent next-day lunch",
+"Warm and filling",
+"Good with rice"
 ]
 },
 
 {
-name: "Cauliflower Green Peas Light Gravy",
-comfort: 9,
-healthy: 8,
-energy: "medium",
-lunch: true,
-prep: "",
-reasons: [
-"Excellent comfort meal",
-"Supports tomorrow lunch planning",
-"Works with both fulka and rice",
-"Emotionally safe dinner"
+name:"Veg Pasta",
+comfort:8,
+healthy:5,
+energy:"high",
+lunch:true,
+prep:"",
+reasons:[
+"Different from regular sabzi",
+"Works in large quantity",
+"Good next-day support",
+"Comfort-heavy meal"
 ]
 },
 
 {
-name: "Veg Pasta",
-comfort: 8,
-healthy: 5,
-energy: "high",
-lunch: true,
-prep: "",
-reasons: [
-"Made in large quantity",
-"Good lunchbox continuation",
-"Feels like a change from regular sabzi",
-"Comforting carb-heavy meal"
-]
-},
-
-{
-name: "Pasta Aglio e Olio",
-comfort: 9,
-healthy: 3,
-energy: "medium",
-lunch: false,
-prep: "",
-reasons: [
+name:"Pasta Aglio e Olio",
+comfort:9,
+healthy:3,
+energy:"medium",
+lunch:false,
+prep:"",
+reasons:[
 "One-time special comfort meal",
-"Both genuinely love it",
-"Best enjoyed fresh",
-"Perfect for relaxed evenings"
+"Both genuinely enjoy it",
+"Perfect relaxed evening option",
+"Best enjoyed fresh"
 ]
 },
 
 {
-name: "Veg Maggi",
-comfort: 10,
-healthy: 2,
-energy: "low",
-lunch: false,
-prep: "",
-reasons: [
-"Emotionally exhausted rescue meal",
+name:"Veg Maggi",
+comfort:10,
+healthy:2,
+energy:"low",
+lunch:false,
+prep:"",
+reasons:[
+"Low-energy rescue food",
+"Warm and emotionally comforting",
 "Minimal effort required",
-"Warm and comforting",
-"Perfect for impossible evenings"
+"Perfect impossible-evening meal"
 ]
 },
 
 {
-name: "Overnight Oats",
-comfort: 7,
-healthy: 10,
-energy: "low",
-lunch: false,
-prep: "oats",
-reasons: [
-"Healthy and emotionally safe",
-"Minimal morning stress",
-"Reliable breakfast planning",
-"Current favourite breakfast"
-]
-},
-
-{
-name: "Egg Curry + Fulka",
-comfort: 8,
-healthy: 8,
-energy: "medium",
-lunch: true,
-prep: "",
-reasons: [
-"Excellent next-day lunch support",
+name:"Egg Curry + Fulka",
+comfort:8,
+healthy:8,
+energy:"medium",
+lunch:true,
+prep:"",
+reasons:[
+"Excellent lunch support",
 "Protein-rich dinner",
 "Works beautifully with rice",
-"Comforting Bengali-style dinner"
+"Comforting and filling"
 ]
 },
 
 {
-name: "Uthappa",
-comfort: 8,
-healthy: 6,
-energy: "medium",
-lunch: false,
-prep: "",
-reasons: [
-"Fresh dinner-only comfort food",
-"Best enjoyed immediately",
-"Good variety option",
-"Feels different from regular meals"
+name:"Lauki Kofta",
+comfort:8,
+healthy:7,
+energy:"high",
+lunch:true,
+prep:"",
+reasons:[
+"Special emotional dinner",
+"Koyel speciality item",
+"Feels luxurious and homemade",
+"Weekend-worthy meal"
 ]
 },
 
 {
-name: "Lauki Kofta",
-comfort: 8,
-healthy: 7,
-energy: "high",
-lunch: true,
-prep: "",
-reasons: [
-"Koyel speciality emotional meal",
-"Weekend-worthy effort",
-"Rich and satisfying",
-"Feels special and homemade"
+name:"Uthappa",
+comfort:8,
+healthy:6,
+energy:"medium",
+lunch:false,
+prep:"",
+reasons:[
+"Fresh dinner-only comfort",
+"Feels different from regular meals",
+"Best eaten immediately",
+"Good change-of-routine meal"
 ]
 }
 
 ];
 
-function clearSelections(group) {
-  group.forEach(btn => btn.classList.remove("selected"));
+function selectUser(btn,user){
+document.querySelectorAll(".card:nth-of-type(2) button").forEach(b=>b.classList.remove("selected"));
+btn.classList.add("selected");
+selectedUser=user;
 }
 
-function selectUser(button, user) {
-  clearSelections(document.querySelectorAll(".card:nth-child(3) button"));
-  button.classList.add("selected");
-  selectedUser = user;
+function selectMood(btn,mood){
+document.querySelectorAll(".card:nth-of-type(3) button").forEach(b=>b.classList.remove("selected"));
+btn.classList.add("selected");
+selectedMood=mood;
 }
 
-function selectMood(button, mood) {
-  clearSelections(document.querySelectorAll(".card:nth-child(4) button"));
-  button.classList.add("selected");
-  selectedMood = mood;
+function selectEnergy(btn,energy){
+document.querySelectorAll(".card:nth-of-type(4) button").forEach(b=>b.classList.remove("selected"));
+btn.classList.add("selected");
+selectedEnergy=energy;
 }
 
-function selectEnergy(button, energy) {
-  clearSelections(document.querySelectorAll(".card:nth-child(5) button"));
-  button.classList.add("selected");
-  selectedEnergy = energy;
+function selectLunch(btn,val){
+document.querySelectorAll(".card:nth-of-type(5) button").forEach(b=>b.classList.remove("selected"));
+btn.classList.add("selected");
+lunchNeeded=val;
 }
 
-function selectLunch(button, value) {
-  clearSelections(document.querySelectorAll(".card:nth-child(6) button"));
-  button.classList.add("selected");
-  lunchNeeded = value;
+function togglePrep(btn,key){
+prepState[key]=!prepState[key];
+
+if(prepState[key]){
+btn.classList.add("selected");
+}else{
+btn.classList.remove("selected");
+}
 }
 
-function togglePrep(button, type) {
-  prepState[type] = !prepState[type];
+function generateRecommendations(){
 
-  if(prepState[type]) {
-    button.classList.add("selected");
-  } else {
-    button.classList.remove("selected");
-  }
+let recentMeals=JSON.parse(localStorage.getItem("mealHistory")||"[]");
+
+let scoredMeals=meals.map(meal=>{
+
+let score=0;
+
+if(selectedMood==="comfort") score+=meal.comfort;
+if(selectedMood==="healthy") score+=meal.healthy;
+
+if(selectedMood==="tired" && meal.energy==="low") score+=10;
+
+if(selectedEnergy===meal.energy) score+=8;
+
+if(lunchNeeded && meal.lunch) score+=10;
+
+if(meal.prep && prepState[meal.prep]) score+=12;
+
+if(selectedUser==="Koyel"){
+if(meal.name.includes("Paneer")) score+=6;
+if(meal.name.includes("Egg")) score-=2;
 }
 
-function generateRecommendations() {
+if(selectedUser==="Pranab"){
+if(meal.name.includes("Egg")) score+=5;
+}
 
-  const results = document.getElementById("results");
-  results.innerHTML = "";
+recentMeals.forEach(oldMeal=>{
+if(oldMeal.name===meal.name){
+score-=18;
+}
+});
 
-  const today = new Date().getDay();
+return{
+...meal,
+score
+};
 
-  let scoredMeals = meals.map(meal => {
+});
 
-    let score = 0;
+scoredMeals.sort((a,b)=>b.score-a.score);
 
-    if(selectedMood === "comfort") score += meal.comfort;
-    if(selectedMood === "healthy") score += meal.healthy;
+let top=scoredMeals.slice(0,3);
 
-    if(selectedMood === "tired" && meal.energy === "low") score += 10;
+const results=document.getElementById("results");
+results.innerHTML="";
 
-    if(selectedEnergy === meal.energy) score += 8;
+top.forEach((meal,index)=>{
 
-    if(lunchNeeded && meal.lunch) score += 10;
+let div=document.createElement("div");
+div.className="recommendation";
 
-    if(meal.prep && prepState[meal.prep]) score += 12;
+div.innerHTML=`
+<div class="meal-title">
+${index===0?"🥇":index===1?"🥈":"🥉"} ${meal.name}
+</div>
 
-    if(today === 5 && !meal.lunch) score += 5;
+<div class="reason">
+${meal.reasons.map(r=>"• "+r).join("<br>")}
+</div>
 
-    if(today === 0 && meal.lunch) score += 6;
+<button class="ate-btn" onclick='saveMeal("${meal.name}")'>
+We Ate This
+</button>
+`;
 
-    return {
-      ...meal,
-      score
-    };
+results.appendChild(div);
 
-  });
-
-  scoredMeals.sort((a,b) => b.score - a.score);
-
-  const topMeals = scoredMeals.slice(0,3);
-
-  topMeals.forEach((meal, index) => {
-
-    const div = document.createElement("div");
-    div.className = "recommendation";
-
-    div.innerHTML = `
-      <div class="meal-name">
-        ${index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"} ${meal.name}
-      </div>
-
-      <div class="meal-reason">
-        ${meal.reasons.map(r => `• ${r}`).join("<br>")}
-      </div>
-    `;
-
-    results.appendChild(div);
-
-  });
+});
 
 }
+
+function saveMeal(mealName){
+
+let history=JSON.parse(localStorage.getItem("mealHistory")||"[]");
+
+history.unshift({
+name:mealName,
+date:new Date().toLocaleString()
+});
+
+history=history.slice(0,5);
+
+localStorage.setItem("mealHistory",JSON.stringify(history));
+
+renderHistory();
+
+alert(mealName+" saved to meal history 🍲");
+
+}
+
+function renderHistory(){
+
+let history=JSON.parse(localStorage.getItem("mealHistory")||"[]");
+
+const historyDiv=document.getElementById("history");
+
+if(history.length===0){
+historyDiv.innerHTML="No meals recorded yet.";
+return;
+}
+
+historyDiv.innerHTML="";
+
+history.forEach(item=>{
+
+let div=document.createElement("div");
+div.className="history-item";
+
+div.innerHTML=`
+<strong>${item.name}</strong><br>
+<small>${item.date}</small>
+`;
+
+historyDiv.appendChild(div);
+
+});
+
+}
+
+function resetAll(){
+
+selectedUser="";
+selectedMood="";
+selectedEnergy="";
+lunchNeeded=false;
+
+prepState.rice=false;
+prepState.oats=false;
+prepState.chila=false;
+
+document.querySelectorAll("button").forEach(btn=>{
+btn.classList.remove("selected");
+});
+
+document.getElementById("results").innerHTML="";
+
+}
+
+function setTheme(theme){
+
+if(theme==="nothing"){
+document.documentElement.style.setProperty('--bg','#f5f5f5');
+document.documentElement.style.setProperty('--card','#ffffff');
+document.documentElement.style.setProperty('--text','#111111');
+document.documentElement.style.setProperty('--accent','#ff3b30');
+document.documentElement.style.setProperty('--sub','#666666');
+}
+
+if(theme==="warm"){
+document.documentElement.style.setProperty('--bg','#fff5e8');
+document.documentElement.style.setProperty('--card','#ffffff');
+document.documentElement.style.setProperty('--text','#4a2c1a');
+document.documentElement.style.setProperty('--accent','#ff8a00');
+document.documentElement.style.setProperty('--sub','#7a5a45');
+}
+
+if(theme==="sage"){
+document.documentElement.style.setProperty('--bg','#eef5ef');
+document.documentElement.style.setProperty('--card','#ffffff');
+document.documentElement.style.setProperty('--text','#233325');
+document.documentElement.style.setProperty('--accent','#5c8d5c');
+document.documentElement.style.setProperty('--sub','#607060');
+}
+
+if(theme==="dark"){
+document.documentElement.style.setProperty('--bg','#181818');
+document.documentElement.style.setProperty('--card','#242424');
+document.documentElement.style.setProperty('--text','#f5f5f5');
+document.documentElement.style.setProperty('--accent','#d4a017');
+document.documentElement.style.setProperty('--sub','#bbbbbb');
+}
+
+localStorage.setItem("theme",theme);
+
+}
+
+window.onload=function(){
+
+renderHistory();
+
+const savedTheme=localStorage.getItem("theme");
+
+if(savedTheme){
+setTheme(savedTheme);
+}
+
+};
 
 </script>
 
