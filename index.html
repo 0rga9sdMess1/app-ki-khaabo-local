@@ -4,18 +4,17 @@ Concept by BanRap
 
 CHANGELOG
 
-Ver.1.1.0.15.05.2026.01.35.00
-- Added intelligent meal memory system
-- Added anti-repetition recommendation engine
-- Added "We Ate This" tracking
-- Added recent meals history panel
-- Added reset selections button
-- Added multi-theme engine
-- Added About Ki Khaabo section
-- Improved scoring logic and UI polish
-
-Ver.1.0.0.15.05.2026.00.45.00
-- Initial release
+Ver.1.2.0.15.05.2026.02.15.00
+- Added 2-page architecture
+- Minimal landing page added
+- Added floating theme switcher
+- Added modal About popup
+- Added recommendation thinking animation
+- Added smarter daily meal tracking
+- Added duplicate meal protection
+- Added Pav Bhaji
+- Added persistent theme system
+- Improved dark mode readability
 -->
 
 <!DOCTYPE html>
@@ -34,15 +33,29 @@ Ver.1.0.0.15.05.2026.00.45.00
   --text:#111111;
   --accent:#ff3b30;
   --sub:#666666;
+  --button:#dddddd;
+}
+
+*{
+  box-sizing:border-box;
 }
 
 body{
   margin:0;
   padding:0;
+  font-family:Arial,sans-serif;
   background:var(--bg);
   color:var(--text);
-  font-family:Arial,sans-serif;
   transition:0.3s;
+}
+
+.page{
+  display:none;
+  min-height:100vh;
+}
+
+.active{
+  display:block;
 }
 
 .container{
@@ -52,18 +65,24 @@ body{
   padding-bottom:100px;
 }
 
-.title{
+.landing{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
   text-align:center;
-  font-size:42px;
+}
+
+.title{
+  font-size:48px;
   font-weight:bold;
-  margin-top:25px;
 }
 
 .subtitle{
-  text-align:center;
+  margin-top:15px;
   color:var(--sub);
-  margin-top:10px;
-  line-height:1.6;
+  line-height:1.7;
 }
 
 .card{
@@ -90,7 +109,7 @@ button{
   border:none;
   padding:14px;
   border-radius:16px;
-  background:#dddddd;
+  background:var(--button);
   color:var(--text);
   cursor:pointer;
   font-size:15px;
@@ -129,6 +148,7 @@ button:hover{
   border-radius:18px;
   padding:18px;
   margin-top:18px;
+  animation:fadeIn 0.5s ease;
 }
 
 .meal-title{
@@ -171,19 +191,109 @@ button:hover{
   opacity:0.7;
 }
 
-.about-text{
+.theme-floating{
+  position:fixed;
+  top:18px;
+  right:18px;
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  background:var(--card);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:24px;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+  z-index:100;
+}
+
+.theme-popup{
+  position:fixed;
+  top:80px;
+  right:18px;
+  background:var(--card);
+  padding:15px;
+  border-radius:18px;
+  display:none;
+  z-index:100;
+  box-shadow:0 5px 20px rgba(0,0,0,0.15);
+}
+
+.theme-popup button{
+  width:100%;
+  margin-top:8px;
+}
+
+.top-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:10px;
+}
+
+.back-btn{
+  width:auto;
+  padding:10px 16px;
+}
+
+.about-link{
+  margin-top:25px;
+  color:var(--accent);
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.55);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:200;
+}
+
+.modal-content{
+  width:90%;
+  max-width:500px;
+  background:var(--card);
+  padding:25px;
+  border-radius:22px;
   line-height:1.8;
+}
+
+.close-modal{
+  margin-top:20px;
+  width:100%;
+}
+
+.loader{
+  text-align:center;
+  margin-top:25px;
+  font-size:18px;
   color:var(--sub);
+  animation:pulse 1s infinite;
 }
 
-.theme-selector{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+@keyframes pulse{
+  0%{opacity:0.3;}
+  50%{opacity:1;}
+  100%{opacity:0.3;}
 }
 
-.theme-btn{
-  padding:12px;
+@keyframes fadeIn{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
 }
 
 </style>
@@ -191,37 +301,78 @@ button:hover{
 
 <body>
 
-<div class="container">
+<div class="theme-floating" onclick="toggleThemePopup()">
+🎨
+</div>
+
+<div class="theme-popup" id="themePopup">
+<button onclick="setTheme('nothing')">Nothing Minimal</button>
+<button onclick="setTheme('warm')">Cozy Bengali</button>
+<button onclick="setTheme('sage')">Sage Calm</button>
+<button onclick="setTheme('dark')">Dark Dinner</button>
+</div>
+
+<!-- PAGE 1 -->
+
+<div class="page active" id="landingPage">
+
+<div class="container landing">
 
 <div class="title">Ki Khaabo?</div>
 
 <div class="subtitle">
-Tonight’s dinner companion 🍲<br>
-Balancing comfort, health, leftovers and real life.
+Balancing comfort, health,<br>
+leftovers and real life 🍲
 </div>
 
-<div class="card">
-<div class="section-title">Choose Theme</div>
+<div class="card" style="width:100%;margin-top:40px;">
 
-<div class="theme-selector">
-<button class="theme-btn" onclick="setTheme('nothing')">Nothing Minimal</button>
-<button class="theme-btn" onclick="setTheme('warm')">Cozy Bengali</button>
-<button class="theme-btn" onclick="setTheme('sage')">Sage Calm</button>
-<button class="theme-btn" onclick="setTheme('dark')">Dark Dinner</button>
+<div class="section-title">
+Who’s checking dinner tonight?
 </div>
-</div>
-
-<div class="card">
-<div class="section-title">Who’s checking dinner tonight?</div>
 
 <div class="button-group">
-<button onclick="selectUser(this,'Pranab')">Pranab</button>
-<button onclick="selectUser(this,'Koyel')">Koyel</button>
+<button onclick="enterApp('Pranab')">Pranab</button>
+<button onclick="enterApp('Koyel')">Koyel</button>
 </div>
+
+</div>
+
+<div class="about-link" onclick="openAbout()">
+Why Ki Khaabo?
+</div>
+
+</div>
+
+</div>
+
+<!-- PAGE 2 -->
+
+<div class="page" id="mainPage">
+
+<div class="container">
+
+<div class="top-bar">
+
+<button class="back-btn" onclick="goBack()">
+← Back
+</button>
+
+<div>
+<strong id="activeUser"></strong>
+</div>
+
+</div>
+
+<div class="title" style="font-size:38px;margin-top:15px;">
+Ki Khaabo?
 </div>
 
 <div class="card">
-<div class="section-title">How’s today feeling?</div>
+
+<div class="section-title">
+How’s today feeling?
+</div>
 
 <div class="button-group">
 <button onclick="selectMood(this,'comfort')">Comfort</button>
@@ -229,35 +380,49 @@ Balancing comfort, health, leftovers and real life.
 <button onclick="selectMood(this,'tired')">Low Energy</button>
 <button onclick="selectMood(this,'exciting')">Something Different</button>
 </div>
+
 </div>
 
 <div class="card">
-<div class="section-title">Cooking energy?</div>
+
+<div class="section-title">
+Cooking energy?
+</div>
 
 <div class="button-group">
 <button onclick="selectEnergy(this,'low')">Minimal</button>
 <button onclick="selectEnergy(this,'medium')">Moderate</button>
 <button onclick="selectEnergy(this,'high')">Can Cook Properly</button>
 </div>
+
 </div>
 
 <div class="card">
-<div class="section-title">Tomorrow lunch needed?</div>
+
+<div class="section-title">
+Tomorrow lunch needed?
+</div>
 
 <div class="button-group">
 <button onclick="selectLunch(this,true)">Yes</button>
 <button onclick="selectLunch(this,false)">No</button>
 </div>
+
 </div>
 
 <div class="card">
-<div class="section-title">Any prep already done?</div>
+
+<div class="section-title">
+Any prep already done?
+</div>
 
 <div class="button-group">
 <button onclick="togglePrep(this,'rice')">Rice Cooked</button>
 <button onclick="togglePrep(this,'oats')">Oats Soaked</button>
 <button onclick="togglePrep(this,'chila')">Chila Batter Ready</button>
+<button onclick="togglePrep(this,'veggies')">Veggies Boiled</button>
 </div>
+
 </div>
 
 <button class="primary-btn" onclick="generateRecommendations()">
@@ -268,32 +433,63 @@ Balancing comfort, health, leftovers and real life.
 Reset Choices
 </button>
 
+<div id="loader"></div>
+
 <div id="results"></div>
 
 <div class="card">
-<div class="section-title">Recent Meals</div>
-<div id="history"></div>
+
+<div class="section-title">
+Recent Meals
 </div>
 
-<div class="card">
-<div class="section-title">🍲 Why Ki Khaabo Exists</div>
+<div id="history"></div>
 
-<div class="about-text">
-Some nights you want comfort.<br><br>
+</div>
 
-Some nights you want health.<br><br>
+</div>
 
-Some nights you just want Maggi and silence.<br><br>
+</div>
 
+<!-- ABOUT MODAL -->
+
+<div class="modal" id="aboutModal">
+
+<div class="modal-content">
+
+<h2>🍲 Why Ki Khaabo Exists</h2>
+
+<p>
+Some nights you want comfort.
+</p>
+
+<p>
+Some nights you want health.
+</p>
+
+<p>
+Some nights you just want Maggi and silence.
+</p>
+
+<p>
 Ki Khaabo? was born from real dinner table confusion:
 “What should we eat tonight?”
 “Will this survive tomorrow lunch?”
-“Didn’t we just have paneer yesterday?”<br><br>
+“Didn’t we just have paneer yesterday?”
+</p>
 
-Between work, tiredness, moods, leftovers and cravings, food becomes less about recipes and more about emotional logistics.<br><br>
+<p>
+Between work, tiredness, moods, leftovers and cravings, food becomes less about recipes and more about emotional logistics.
+</p>
 
+<p>
 This app tries to help with that gently.
-</div>
+</p>
+
+<button class="close-modal" onclick="closeAbout()">
+Close
+</button>
+
 </div>
 
 </div>
@@ -303,7 +499,7 @@ Concept by BanRap
 </div>
 
 <div class="footer-right">
-Ver.1.1.0.15.05.2026.01.35.00
+Ver.1.2.0.15.05.2026.02.15.00
 </div>
 
 <script>
@@ -316,7 +512,8 @@ let lunchNeeded=false;
 const prepState={
 rice:false,
 oats:false,
-chila:false
+chila:false,
+veggies:false
 };
 
 const meals=[
@@ -331,7 +528,6 @@ prep:"rice",
 reasons:[
 "Both emotionally love it",
 "Perfect comfort meal",
-"Great for Friday evenings",
 "Rice prep already done"
 ]
 },
@@ -346,8 +542,22 @@ prep:"chila",
 reasons:[
 "Healthy and protein rich",
 "Excellent lunchbox support",
-"Emotionally reliable meal",
 "Fresh and satisfying"
+]
+},
+
+{
+name:"Pav Bhaji",
+comfort:10,
+healthy:5,
+energy:"high",
+lunch:true,
+prep:"veggies",
+reasons:[
+"Koyel speciality masterpiece",
+"Excellent emotional comfort food",
+"Works surprisingly well with rice next day",
+"Veggies already boiled"
 ]
 },
 
@@ -360,8 +570,6 @@ lunch:false,
 prep:"",
 reasons:[
 "Always emotionally satisfying",
-"Pairs beautifully with masoor dal",
-"Best enjoyed fresh",
 "Classic comfort dinner"
 ]
 },
@@ -375,9 +583,7 @@ lunch:true,
 prep:"",
 reasons:[
 "Strong lunch continuity",
-"Balanced comfort food",
-"Works with dal-rice next day",
-"Reliable household favourite"
+"Balanced comfort food"
 ]
 },
 
@@ -390,9 +596,7 @@ lunch:true,
 prep:"",
 reasons:[
 "Koyel comfort favourite",
-"Excellent next-day lunch",
-"Warm and filling",
-"Good with rice"
+"Excellent next-day lunch"
 ]
 },
 
@@ -405,8 +609,6 @@ lunch:true,
 prep:"",
 reasons:[
 "Different from regular sabzi",
-"Works in large quantity",
-"Good next-day support",
 "Comfort-heavy meal"
 ]
 },
@@ -420,9 +622,7 @@ lunch:false,
 prep:"",
 reasons:[
 "One-time special comfort meal",
-"Both genuinely enjoy it",
-"Perfect relaxed evening option",
-"Best enjoyed fresh"
+"Perfect relaxed evening option"
 ]
 },
 
@@ -435,9 +635,7 @@ lunch:false,
 prep:"",
 reasons:[
 "Low-energy rescue food",
-"Warm and emotionally comforting",
-"Minimal effort required",
-"Perfect impossible-evening meal"
+"Minimal effort required"
 ]
 },
 
@@ -450,69 +648,86 @@ lunch:true,
 prep:"",
 reasons:[
 "Excellent lunch support",
-"Protein-rich dinner",
-"Works beautifully with rice",
-"Comforting and filling"
-]
-},
-
-{
-name:"Lauki Kofta",
-comfort:8,
-healthy:7,
-energy:"high",
-lunch:true,
-prep:"",
-reasons:[
-"Special emotional dinner",
-"Koyel speciality item",
-"Feels luxurious and homemade",
-"Weekend-worthy meal"
-]
-},
-
-{
-name:"Uthappa",
-comfort:8,
-healthy:6,
-energy:"medium",
-lunch:false,
-prep:"",
-reasons:[
-"Fresh dinner-only comfort",
-"Feels different from regular meals",
-"Best eaten immediately",
-"Good change-of-routine meal"
+"Protein-rich dinner"
 ]
 }
 
 ];
 
-function selectUser(btn,user){
-document.querySelectorAll(".card:nth-of-type(2) button").forEach(b=>b.classList.remove("selected"));
-btn.classList.add("selected");
+function enterApp(user){
+
 selectedUser=user;
+
+localStorage.setItem("lastUser",user);
+
+document.getElementById("activeUser").innerText=user;
+
+document.getElementById("landingPage").classList.remove("active");
+document.getElementById("mainPage").classList.add("active");
+
+}
+
+function goBack(){
+
+document.getElementById("mainPage").classList.remove("active");
+document.getElementById("landingPage").classList.add("active");
+
+}
+
+function toggleThemePopup(){
+
+const popup=document.getElementById("themePopup");
+
+popup.style.display=
+popup.style.display==="block"
+? "none"
+: "block";
+
+}
+
+function openAbout(){
+document.getElementById("aboutModal").style.display="flex";
+}
+
+function closeAbout(){
+document.getElementById("aboutModal").style.display="none";
 }
 
 function selectMood(btn,mood){
-document.querySelectorAll(".card:nth-of-type(3) button").forEach(b=>b.classList.remove("selected"));
+
+document.querySelectorAll(".card:nth-of-type(1) button")
+.forEach(b=>b.classList.remove("selected"));
+
 btn.classList.add("selected");
+
 selectedMood=mood;
+
 }
 
 function selectEnergy(btn,energy){
-document.querySelectorAll(".card:nth-of-type(4) button").forEach(b=>b.classList.remove("selected"));
+
+document.querySelectorAll(".card:nth-of-type(2) button")
+.forEach(b=>b.classList.remove("selected"));
+
 btn.classList.add("selected");
+
 selectedEnergy=energy;
+
 }
 
 function selectLunch(btn,val){
-document.querySelectorAll(".card:nth-of-type(5) button").forEach(b=>b.classList.remove("selected"));
+
+document.querySelectorAll(".card:nth-of-type(3) button")
+.forEach(b=>b.classList.remove("selected"));
+
 btn.classList.add("selected");
+
 lunchNeeded=val;
+
 }
 
 function togglePrep(btn,key){
+
 prepState[key]=!prepState[key];
 
 if(prepState[key]){
@@ -520,11 +735,27 @@ btn.classList.add("selected");
 }else{
 btn.classList.remove("selected");
 }
+
 }
 
 function generateRecommendations(){
 
-let recentMeals=JSON.parse(localStorage.getItem("mealHistory")||"[]");
+document.getElementById("results").innerHTML="";
+
+const loader=document.getElementById("loader");
+
+loader.innerHTML=`
+<div class="loader">
+Consulting the dinner gods... 🍲
+</div>
+`;
+
+setTimeout(()=>{
+
+loader.innerHTML="";
+
+let history=
+JSON.parse(localStorage.getItem("mealHistory")||"[]");
 
 let scoredMeals=meals.map(meal=>{
 
@@ -533,16 +764,24 @@ let score=0;
 if(selectedMood==="comfort") score+=meal.comfort;
 if(selectedMood==="healthy") score+=meal.healthy;
 
-if(selectedMood==="tired" && meal.energy==="low") score+=10;
+if(selectedMood==="tired" && meal.energy==="low"){
+score+=12;
+}
 
-if(selectedEnergy===meal.energy) score+=8;
+if(selectedEnergy===meal.energy){
+score+=8;
+}
 
-if(lunchNeeded && meal.lunch) score+=10;
+if(lunchNeeded && meal.lunch){
+score+=10;
+}
 
-if(meal.prep && prepState[meal.prep]) score+=12;
+if(meal.prep && prepState[meal.prep]){
+score+=12;
+}
 
 if(selectedUser==="Koyel"){
-if(meal.name.includes("Paneer")) score+=6;
+if(meal.name.includes("Paneer")) score+=5;
 if(meal.name.includes("Egg")) score-=2;
 }
 
@@ -550,7 +789,7 @@ if(selectedUser==="Pranab"){
 if(meal.name.includes("Egg")) score+=5;
 }
 
-recentMeals.forEach(oldMeal=>{
+history.forEach(oldMeal=>{
 if(oldMeal.name===meal.name){
 score-=18;
 }
@@ -565,17 +804,18 @@ score
 
 scoredMeals.sort((a,b)=>b.score-a.score);
 
-let top=scoredMeals.slice(0,3);
+const top=scoredMeals.slice(0,3);
 
 const results=document.getElementById("results");
-results.innerHTML="";
 
 top.forEach((meal,index)=>{
 
 let div=document.createElement("div");
+
 div.className="recommendation";
 
 div.innerHTML=`
+
 <div class="meal-title">
 ${index===0?"🥇":index===1?"🥈":"🥉"} ${meal.name}
 </div>
@@ -584,60 +824,94 @@ ${index===0?"🥇":index===1?"🥈":"🥉"} ${meal.name}
 ${meal.reasons.map(r=>"• "+r).join("<br>")}
 </div>
 
-<button class="ate-btn" onclick='saveMeal("${meal.name}")'>
+<button class="ate-btn"
+onclick='saveMeal("${meal.name}")'>
 We Ate This
 </button>
+
 `;
 
 results.appendChild(div);
 
 });
 
+},1600);
+
 }
 
 function saveMeal(mealName){
 
-let history=JSON.parse(localStorage.getItem("mealHistory")||"[]");
+let history=
+JSON.parse(localStorage.getItem("mealHistory")||"[]");
+
+const today=
+new Date().toDateString();
+
+const todayMeal=
+history.find(m=>m.day===today);
+
+if(todayMeal){
+
+const replace=
+confirm(
+`You already recorded "${todayMeal.name}" today.\n\nReplace it with "${mealName}"?`
+);
+
+if(!replace) return;
+
+history=
+history.filter(m=>m.day!==today);
+
+}
 
 history.unshift({
 name:mealName,
-date:new Date().toLocaleString()
+date:new Date().toLocaleString(),
+day:today
 });
 
 history=history.slice(0,5);
 
-localStorage.setItem("mealHistory",JSON.stringify(history));
+localStorage.setItem(
+"mealHistory",
+JSON.stringify(history)
+);
 
 renderHistory();
 
-alert(mealName+" saved to meal history 🍲");
+alert(mealName+" saved 🍲");
 
 }
 
 function renderHistory(){
 
-let history=JSON.parse(localStorage.getItem("mealHistory")||"[]");
+const history=
+JSON.parse(localStorage.getItem("mealHistory")||"[]");
 
-const historyDiv=document.getElementById("history");
+const div=document.getElementById("history");
 
 if(history.length===0){
-historyDiv.innerHTML="No meals recorded yet.";
+
+div.innerHTML="No meals recorded yet.";
+
 return;
+
 }
 
-historyDiv.innerHTML="";
+div.innerHTML="";
 
 history.forEach(item=>{
 
-let div=document.createElement("div");
-div.className="history-item";
+let row=document.createElement("div");
 
-div.innerHTML=`
+row.className="history-item";
+
+row.innerHTML=`
 <strong>${item.name}</strong><br>
 <small>${item.date}</small>
 `;
 
-historyDiv.appendChild(div);
+div.appendChild(row);
 
 });
 
@@ -645,7 +919,6 @@ historyDiv.appendChild(div);
 
 function resetAll(){
 
-selectedUser="";
 selectedMood="";
 selectedEnergy="";
 lunchNeeded=false;
@@ -653,47 +926,60 @@ lunchNeeded=false;
 prepState.rice=false;
 prepState.oats=false;
 prepState.chila=false;
+prepState.veggies=false;
 
-document.querySelectorAll("button").forEach(btn=>{
-btn.classList.remove("selected");
-});
+document.querySelectorAll(".selected")
+.forEach(el=>el.classList.remove("selected"));
 
 document.getElementById("results").innerHTML="";
+document.getElementById("loader").innerHTML="";
 
 }
 
 function setTheme(theme){
 
 if(theme==="nothing"){
+
 document.documentElement.style.setProperty('--bg','#f5f5f5');
 document.documentElement.style.setProperty('--card','#ffffff');
 document.documentElement.style.setProperty('--text','#111111');
 document.documentElement.style.setProperty('--accent','#ff3b30');
 document.documentElement.style.setProperty('--sub','#666666');
+document.documentElement.style.setProperty('--button','#dddddd');
+
 }
 
 if(theme==="warm"){
+
 document.documentElement.style.setProperty('--bg','#fff5e8');
 document.documentElement.style.setProperty('--card','#ffffff');
 document.documentElement.style.setProperty('--text','#4a2c1a');
 document.documentElement.style.setProperty('--accent','#ff8a00');
 document.documentElement.style.setProperty('--sub','#7a5a45');
+document.documentElement.style.setProperty('--button','#f2d2a8');
+
 }
 
 if(theme==="sage"){
+
 document.documentElement.style.setProperty('--bg','#eef5ef');
 document.documentElement.style.setProperty('--card','#ffffff');
 document.documentElement.style.setProperty('--text','#233325');
 document.documentElement.style.setProperty('--accent','#5c8d5c');
 document.documentElement.style.setProperty('--sub','#607060');
+document.documentElement.style.setProperty('--button','#d9e7da');
+
 }
 
 if(theme==="dark"){
+
 document.documentElement.style.setProperty('--bg','#181818');
 document.documentElement.style.setProperty('--card','#242424');
 document.documentElement.style.setProperty('--text','#f5f5f5');
 document.documentElement.style.setProperty('--accent','#d4a017');
 document.documentElement.style.setProperty('--sub','#bbbbbb');
+document.documentElement.style.setProperty('--button','#333333');
+
 }
 
 localStorage.setItem("theme",theme);
@@ -704,10 +990,18 @@ window.onload=function(){
 
 renderHistory();
 
-const savedTheme=localStorage.getItem("theme");
+const savedTheme=
+localStorage.getItem("theme");
 
 if(savedTheme){
 setTheme(savedTheme);
+}
+
+const lastUser=
+localStorage.getItem("lastUser");
+
+if(lastUser){
+document.getElementById("activeUser").innerText=lastUser;
 }
 
 };
