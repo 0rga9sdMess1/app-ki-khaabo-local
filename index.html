@@ -12,17 +12,18 @@ Concept by BanRap
 
 CHANGELOG
 
-Ver.1.2.3.15.05.2026.04.02.00
+Ver.1.2.4.15.05.2026.04.28.00
 
-- Full stable rebuild
-- Fixed broken landing page
-- Fixed theme switcher
-- Fixed page navigation
-- Added subtle homepage glow
+- Stable rebuild refinement
+- Centered user badge
+- Improved top bar symmetry
 - Compact back button
-- Prominent user badge
-- Fixed selection logic
-- Fixed back reset behavior
+- Added meal prep question
+- Added “Didn't / can't prep today”
+- Improved landing page spacing
+- Improved homepage glow
+- Fixed button state logic
+- Fixed reset behavior
 - Fixed duplicate meal logging
 -->
 
@@ -30,11 +31,11 @@ Ver.1.2.3.15.05.2026.04.02.00
 
 :root{
 --bg:#f5f5f5;
---card:#fff;
---text:#111;
+--card:#ffffff;
+--text:#111111;
 --accent:#ff5b35;
---sub:#666;
---button:#ddd;
+--sub:#666666;
+--button:#dddddd;
 }
 
 *{
@@ -192,17 +193,19 @@ margin-top:8px;
 }
 
 .about-link{
-margin-top:40px;
+margin-top:70px;
 color:var(--accent);
 font-weight:bold;
 cursor:pointer;
 }
 
 .top-bar{
+position:relative;
 display:flex;
-justify-content:space-between;
 align-items:center;
-margin-bottom:20px;
+justify-content:flex-start;
+margin-bottom:26px;
+min-height:52px;
 }
 
 .back-btn{
@@ -212,10 +215,14 @@ flex:none;
 }
 
 .user-badge{
+position:absolute;
+left:50%;
+transform:translateX(-50%);
 background:var(--card);
-padding:12px 18px;
+padding:12px 20px;
 border-radius:18px;
 font-weight:bold;
+font-size:15px;
 box-shadow:0 4px 12px rgba(0,0,0,.08);
 }
 
@@ -301,6 +308,7 @@ width:100%;
 
 </style>
 </head>
+
 <body>
 
 <div class="theme-floating" onclick="toggleThemePopup()">🎨</div>
@@ -312,14 +320,17 @@ width:100%;
 <button onclick="setTheme('dark')">Dark</button>
 </div>
 
-<!-- LANDING -->
+<!-- LANDING PAGE -->
 
 <div class="page active" id="landingPage">
+
 <div class="container landing">
 
 <div class="glow"></div>
 
-<div class="title">Ki Khaabo?</div>
+<div class="title">
+Ki Khaabo?
+</div>
 
 <div class="subtitle">
 Balancing comfort, health,<br>
@@ -333,8 +344,13 @@ Who’s checking dinner tonight?
 </div>
 
 <div class="button-group">
-<button onclick="enterApp('Pranab')">Pranab</button>
-<button onclick="enterApp('Koyel')">Koyel</button>
+<button onclick="enterApp('Pranab')">
+Pranab
+</button>
+
+<button onclick="enterApp('Koyel')">
+Koyel
+</button>
 </div>
 
 </div>
@@ -344,89 +360,197 @@ Why Ki Khaabo?
 </div>
 
 </div>
+
 </div>
 
-<!-- MAIN -->
+<!-- MAIN PAGE -->
 
 <div class="page" id="mainPage">
+
 <div class="container">
 
 <div class="top-bar">
-<button class="back-btn" onclick="goBack()">← Back</button>
-<div class="user-badge" id="activeUser">🍲 Tonight</div>
+
+<button class="back-btn" onclick="goBack()">
+← Back
+</button>
+
+<div class="user-badge" id="activeUser">
+🍲 Tonight
 </div>
 
-<div class="title" style="font-size:36px;">Ki Khaabo?</div>
+</div>
+
+<div class="title" style="font-size:36px;">
+Ki Khaabo?
+</div>
+
+<!-- MOOD -->
 
 <div class="card">
-<div class="section-title">Mood</div>
+
+<div class="section-title">
+Mood
+</div>
+
 <div class="button-group" id="moodButtons">
-<button onclick="selectMood(this,'comfort')">Comfort</button>
-<button onclick="selectMood(this,'healthy')">Healthy</button>
-<button onclick="selectMood(this,'lazy')">Low Energy</button>
-<button onclick="selectMood(this,'different')">Different</button>
-</div>
+
+<button onclick="selectMood(this,'comfort')">
+Comfort
+</button>
+
+<button onclick="selectMood(this,'healthy')">
+Healthy
+</button>
+
+<button onclick="selectMood(this,'lazy')">
+Low Energy
+</button>
+
+<button onclick="selectMood(this,'different')">
+Different
+</button>
+
 </div>
 
+</div>
+
+<!-- COOKING EFFORT -->
+
 <div class="card">
-<div class="section-title">Cooking effort</div>
+
+<div class="section-title">
+Cooking effort
+</div>
+
 <div class="button-group" id="energyButtons">
-<button onclick="selectEnergy(this,'low')">Minimal</button>
-<button onclick="selectEnergy(this,'medium')">Moderate</button>
-<button onclick="selectEnergy(this,'high')">Proper Cooking</button>
-</div>
+
+<button onclick="selectEnergy(this,'low')">
+Minimal
+</button>
+
+<button onclick="selectEnergy(this,'medium')">
+Moderate
+</button>
+
+<button onclick="selectEnergy(this,'high')">
+Proper Cooking
+</button>
+
 </div>
 
-<div class="card">
-<div class="section-title">Tomorrow lunch?</div>
-<div class="button-group" id="lunchButtons">
-<button onclick="selectLunch(this,true)">Yes</button>
-<button onclick="selectLunch(this,false)">No</button>
 </div>
+
+<!-- PREP -->
+
+<div class="card">
+
+<div class="section-title">
+Meal prep status
+</div>
+
+<div class="button-group" id="prepButtons">
+
+<button onclick="selectPrep(this,'done')">
+Meal prep done
+</button>
+
+<button onclick="selectPrep(this,'cant')">
+Didn't / can't prep today
+</button>
+
+</div>
+
+</div>
+
+<!-- LUNCH -->
+
+<div class="card">
+
+<div class="section-title">
+Tomorrow lunch?
+</div>
+
+<div class="button-group" id="lunchButtons">
+
+<button onclick="selectLunch(this,true)">
+Yes
+</button>
+
+<button onclick="selectLunch(this,false)">
+No
+</button>
+
+</div>
+
 </div>
 
 <button class="primary-btn" onclick="generateRecommendations()">
 🍛 Tell Me What We Should Eat
 </button>
 
-<button class="reset-btn" onclick="resetAll()">Reset Choices</button>
+<button class="reset-btn" onclick="resetAll()">
+Reset Choices
+</button>
 
 <div id="loader"></div>
+
 <div id="results"></div>
 
 <div class="card">
-<div class="section-title">Recent Meals</div>
+
+<div class="section-title">
+Recent Meals
+</div>
+
 <div id="history"></div>
+
 </div>
 
 </div>
+
 </div>
 
-<!-- ABOUT -->
+<!-- ABOUT MODAL -->
 
 <div class="modal" id="aboutModal">
+
 <div class="modal-content">
+
 <h2>Why Ki Khaabo?</h2>
+
 <p>
 Because dinner decisions are emotional logistics.
 Balancing cravings, health, leftovers and mood is harder than recipes.
-This app helps gently decide what feels right tonight.
+This app gently helps decide what feels right tonight.
 </p>
-<button class="close-modal" onclick="closeAbout()">Close</button>
-</div>
+
+<button class="close-modal" onclick="closeAbout()">
+Close
+</button>
+
 </div>
 
-<div class="footer-left">Concept by BanRap</div>
-<div class="footer-right">Ver.1.2.3</div>
+</div>
+
+<div class="footer-left">
+Concept by BanRap
+</div>
+
+<div class="footer-right">
+Ver.1.2.4
+</div>
 
 <script>
 
 let selectedUser="";
 let selectedMood="";
 let selectedEnergy="";
+let prepStatus="";
 let lunchNeeded=false;
 
 const meals=[
+
 "Egg Fried Rice",
 "Moong Dal Chila",
 "Pav Bhaji",
@@ -434,164 +558,316 @@ const meals=[
 "Paneer Gravy",
 "Veg Pasta",
 "Egg Curry",
-"Veg Maggi"
+"Veg Maggi",
+"Lauki Sabzi",
+"Palak Paneer"
+
 ];
 
 function toggleThemePopup(){
+
 let p=document.getElementById("themePopup");
-p.style.display=p.style.display==="block"?"none":"block";
+
+p.style.display=
+p.style.display==="block"?"none":"block";
+
 }
 
 function setTheme(theme){
+
 if(theme==="nothing"){
 css("#f5f5f5","#fff","#111","#ff5b35","#666","#ddd");
 }
+
 if(theme==="warm"){
 css("#fff6ea","#fff","#5a3a1d","#ff8a00","#7a5a45","#f2d7b0");
 }
+
 if(theme==="sage"){
 css("#eef5ef","#fff","#233325","#5c8d5c","#607060","#d9e7da");
 }
+
 if(theme==="dark"){
-css("#181818","#242424","#fff","#d4a017","#bbb","#333");
+css("#181818","#242424","#ffffff","#d4a017","#bbbbbb","#333333");
 }
+
 localStorage.setItem("theme",theme);
+
 }
 
 function css(bg,card,text,accent,sub,button){
-document.documentElement.style.setProperty("--bg",bg);
-document.documentElement.style.setProperty("--card",card);
-document.documentElement.style.setProperty("--text",text);
-document.documentElement.style.setProperty("--accent",accent);
-document.documentElement.style.setProperty("--sub",sub);
-document.documentElement.style.setProperty("--button",button);
+
+document.documentElement.style
+.setProperty("--bg",bg);
+
+document.documentElement.style
+.setProperty("--card",card);
+
+document.documentElement.style
+.setProperty("--text",text);
+
+document.documentElement.style
+.setProperty("--accent",accent);
+
+document.documentElement.style
+.setProperty("--sub",sub);
+
+document.documentElement.style
+.setProperty("--button",button);
+
 }
 
 function enterApp(user){
+
 selectedUser=user;
-document.getElementById("activeUser").innerHTML="🍲 "+user;
+
+document.getElementById("activeUser")
+.innerHTML="🍲 "+user;
+
 resetAll();
+
 swap("landingPage","mainPage");
+
 }
 
 function goBack(){
+
 resetAll();
+
 swap("mainPage","landingPage");
+
 }
 
 function swap(from,to){
-document.getElementById(from).classList.remove("active");
-document.getElementById(to).classList.add("active");
+
+document.getElementById(from)
+.classList.remove("active");
+
+document.getElementById(to)
+.classList.add("active");
+
 }
 
 function selectMood(btn,m){
+
 clear("#moodButtons");
+
 btn.classList.add("selected");
+
 selectedMood=m;
+
 }
 
 function selectEnergy(btn,m){
+
 clear("#energyButtons");
+
 btn.classList.add("selected");
+
 selectedEnergy=m;
+
+}
+
+function selectPrep(btn,m){
+
+clear("#prepButtons");
+
+btn.classList.add("selected");
+
+prepStatus=m;
+
 }
 
 function selectLunch(btn,m){
+
 clear("#lunchButtons");
+
 btn.classList.add("selected");
+
 lunchNeeded=m;
+
 }
 
 function clear(id){
+
 document.querySelectorAll(id+" button")
 .forEach(b=>b.classList.remove("selected"));
+
 }
 
 function resetAll(){
+
 selectedMood="";
 selectedEnergy="";
+prepStatus="";
 lunchNeeded=false;
+
 document.querySelectorAll(".selected")
 .forEach(x=>x.classList.remove("selected"));
+
 document.getElementById("results").innerHTML="";
 document.getElementById("loader").innerHTML="";
+
 }
 
 function generateRecommendations(){
-document.getElementById("loader").innerHTML="<div class='loader'>Consulting the dinner gods... 🍲</div>";
+
+document.getElementById("loader")
+.innerHTML=
+"<div class='loader'>Consulting the dinner gods... 🍲</div>";
 
 setTimeout(()=>{
+
 document.getElementById("loader").innerHTML="";
-let pick=meals.sort(()=>0.5-Math.random()).slice(0,3);
+
+let pick=
+meals.sort(()=>0.5-Math.random())
+.slice(0,3);
 
 let html="";
+
 pick.forEach((m,i)=>{
+
 html+=`
+
 <div class="recommendation">
-<div class="meal-title">${["🥇","🥈","🥉"][i]} ${m}</div>
-<div class="reason">A strong match for tonight’s mood and logistics.</div>
-<button class="ate-btn" onclick="saveMeal('${m}')">We Ate This</button>
-</div>`;
+
+<div class="meal-title">
+${["🥇","🥈","🥉"][i]} ${m}
+</div>
+
+<div class="reason">
+A strong match for tonight’s mood and logistics.
+</div>
+
+<button class="ate-btn"
+onclick="saveMeal('${m}')">
+
+We Ate This
+
+</button>
+
+</div>
+
+`;
+
 });
 
 document.getElementById("results").innerHTML=html;
+
 },1300);
+
 }
 
 function saveMeal(meal){
-let history=JSON.parse(localStorage.getItem("mealHistory")||"[]");
-let today=new Date().toDateString();
-let existing=history.find(x=>x.day===today);
+
+let history=
+JSON.parse(
+localStorage.getItem("mealHistory")||"[]"
+);
+
+let today=
+new Date().toDateString();
+
+let existing=
+history.find(x=>x.day===today);
 
 if(existing){
+
 if(existing.name===meal){
+
 alert("Already recorded today 🍲");
+
 return;
+
 }
-if(!confirm(`Replace "${existing.name}" with "${meal}"?`)) return;
-history=history.filter(x=>x.day!==today);
+
+if(
+!confirm(
+`Replace "${existing.name}" with "${meal}"?`
+)
+)return;
+
+history=
+history.filter(x=>x.day!==today);
+
 }
 
 history.unshift({
+
 name:meal,
 day:today,
 date:new Date().toLocaleString()
+
 });
 
 history=history.slice(0,5);
 
-localStorage.setItem("mealHistory",JSON.stringify(history));
+localStorage.setItem(
+"mealHistory",
+JSON.stringify(history)
+);
 
 renderHistory();
+
 alert(meal+" saved 🍲");
+
 }
 
 function renderHistory(){
-let history=JSON.parse(localStorage.getItem("mealHistory")||"[]");
 
-let html=history.length?
+let history=
+JSON.parse(
+localStorage.getItem("mealHistory")||"[]"
+);
+
+let html=
+history.length?
+
 history.map(h=>`
-<div class="history-item">
-<strong>${h.name}</strong><br>
-<small>${h.date}</small>
-</div>`).join("")
-:"No meals recorded yet.";
 
-document.getElementById("history").innerHTML=html;
+<div class="history-item">
+
+<strong>${h.name}</strong><br>
+
+<small>${h.date}</small>
+
+</div>
+
+`).join("")
+
+:
+
+"No meals recorded yet.";
+
+document.getElementById("history")
+.innerHTML=html;
+
 }
 
 function openAbout(){
-document.getElementById("aboutModal").style.display="flex";
+
+document.getElementById("aboutModal")
+.style.display="flex";
+
 }
 
 function closeAbout(){
-document.getElementById("aboutModal").style.display="none";
+
+document.getElementById("aboutModal")
+.style.display="none";
+
 }
 
 window.onload=()=>{
+
 renderHistory();
-let t=localStorage.getItem("theme");
+
+let t=
+localStorage.getItem("theme");
+
 if(t)setTheme(t);
+
 };
 
 </script>
