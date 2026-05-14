@@ -4,136 +4,27 @@ Concept by BanRap
 
 CHANGELOG
 
-Ver.1.2.1.15.05.2026.03.05.00
+Ver.1.2.2.15.05.2026.03.32.00
 
-- Added warm glow behind title
-- Added animated steam effect
-- Added floating rotating food quotes
-- Improved landing page atmosphere
-- Fixed multiple button selection bug
-- Fixed back button reset behavior
-- Improved user badge visibility
-- Improved homepage spacing
-- Added cleaner compact back button
-- Improved duplicate meal handling
+- Fixed broken landing page
+- Restored Pranab / Koyel buttons
+- Restored theme switcher functionality
+- Removed floating quotes system
+- Kept warm glow effect
+- Kept subtle steam animation
+- Fixed page hierarchy
+- Fixed button selection logic
+- Improved back button behavior
+- Improved duplicate meal logic
 -->
 
-<style>
+<!-- ========================================= -->
+<!-- REPLACE YOUR ENTIRE LANDING PAGE SECTION -->
+<!-- ========================================= -->
 
-/* ADD THIS INSIDE YOUR EXISTING <style> SECTION */
+<div class="page active" id="landingPage">
 
-/* ---------- LANDING PAGE ENHANCEMENTS ---------- */
-
-.title-wrapper{
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  margin-bottom:10px;
-}
-
-.title-glow{
-  position:absolute;
-  width:220px;
-  height:220px;
-  background:radial-gradient(circle, rgba(255,140,0,0.18), transparent 70%);
-  border-radius:50%;
-  z-index:0;
-  filter:blur(12px);
-}
-
-.steam-container{
-  display:flex;
-  gap:8px;
-  margin-bottom:8px;
-  z-index:2;
-}
-
-.steam{
-  width:6px;
-  height:35px;
-  border-radius:20px;
-  background:rgba(255,255,255,0.5);
-  animation:steamFloat 3s infinite ease-in-out;
-}
-
-.steam:nth-child(2){
-  animation-delay:0.5s;
-}
-
-.steam:nth-child(3){
-  animation-delay:1s;
-}
-
-@keyframes steamFloat{
-  0%{
-    transform:translateY(0px);
-    opacity:0.2;
-  }
-  50%{
-    transform:translateY(-10px);
-    opacity:0.7;
-  }
-  100%{
-    transform:translateY(-20px);
-    opacity:0;
-  }
-}
-
-.floating-quote{
-  margin-top:28px;
-  margin-bottom:28px;
-  font-size:15px;
-  color:var(--sub);
-  opacity:0;
-  animation:fadeQuote 4s infinite;
-  min-height:24px;
-  text-align:center;
-  padding:0 20px;
-  line-height:1.5;
-}
-
-@keyframes fadeQuote{
-  0%{
-    opacity:0;
-  }
-  15%{
-    opacity:1;
-  }
-  70%{
-    opacity:1;
-  }
-  100%{
-    opacity:0;
-  }
-}
-
-.user-badge{
-  background:var(--card);
-  padding:10px 16px;
-  border-radius:16px;
-  font-size:15px;
-  font-weight:bold;
-  box-shadow:0 4px 12px rgba(0,0,0,0.08);
-}
-
-.back-btn{
-  width:auto !important;
-  min-width:90px;
-  padding:10px 16px !important;
-  font-size:14px;
-}
-
-.about-link{
-  margin-top:45px !important;
-}
-
-</style>
-
-<!-- ===================================================== -->
-<!-- REPLACE ONLY THE LANDING PAGE TITLE SECTION WITH THIS -->
-<!-- ===================================================== -->
+<div class="container landing">
 
 <div class="title-wrapper">
 
@@ -156,36 +47,152 @@ Balancing comfort, health,<br>
 leftovers and real life 🍲
 </div>
 
-<div class="floating-quote" id="floatingQuote">
-Some nights deserve fried rice.
+<div class="card" style="width:100%;margin-top:40px;">
+
+<div class="section-title">
+Who’s checking dinner tonight?
 </div>
 
-<!-- ================================================= -->
-<!-- REPLACE activeUser DIV IN PAGE 2 TOP BAR WITH THIS -->
-<!-- ================================================= -->
+<div class="button-group">
+<button onclick="enterApp('Pranab')">
+Pranab
+</button>
+
+<button onclick="enterApp('Koyel')">
+Koyel
+</button>
+</div>
+
+</div>
+
+<div class="about-link" onclick="openAbout()">
+Why Ki Khaabo?
+</div>
+
+</div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- ADD THIS INSIDE YOUR EXISTING <style> -->
+<!-- ========================================= -->
+
+<style>
+
+.title-wrapper{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:10px;
+}
+
+.title-glow{
+  position:absolute;
+  width:220px;
+  height:220px;
+  background:radial-gradient(circle,
+  rgba(255,140,0,0.15),
+  transparent 70%);
+  border-radius:50%;
+  z-index:0;
+  filter:blur(16px);
+}
+
+.steam-container{
+  display:flex;
+  gap:8px;
+  margin-bottom:8px;
+  z-index:2;
+}
+
+.steam{
+  width:6px;
+  height:35px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.35);
+  animation:steamFloat 3s infinite ease-in-out;
+}
+
+.steam:nth-child(2){
+  animation-delay:0.5s;
+}
+
+.steam:nth-child(3){
+  animation-delay:1s;
+}
+
+@keyframes steamFloat{
+
+  0%{
+    transform:translateY(0px);
+    opacity:0.15;
+  }
+
+  50%{
+    transform:translateY(-10px);
+    opacity:0.45;
+  }
+
+  100%{
+    transform:translateY(-18px);
+    opacity:0;
+  }
+
+}
+
+.back-btn{
+  width:auto !important;
+  min-width:90px;
+  padding:10px 16px !important;
+  font-size:14px;
+}
+
+.user-badge{
+  background:var(--card);
+  padding:10px 16px;
+  border-radius:16px;
+  font-size:15px;
+  font-weight:bold;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+.about-link{
+  margin-top:45px !important;
+}
+
+</style>
+
+<!-- ========================================= -->
+<!-- REPLACE activeUser DIV WITH THIS -->
+<!-- ========================================= -->
 
 <div class="user-badge" id="activeUser">
 🍲 Tonight: Pranab
 </div>
 
-<!-- =============================================== -->
-<!-- REPLACE YOUR EXISTING goBack() FUNCTION WITH THIS -->
-<!-- =============================================== -->
+<!-- ========================================= -->
+<!-- IMPORTANT BUTTON GROUP FIXES -->
+<!-- REPLACE THESE DIVS -->
+<!-- ========================================= -->
+
+<!-- MOOD -->
+<div class="button-group" id="moodButtons">
+
+<!-- ENERGY -->
+<div class="button-group" id="energyButtons">
+
+<!-- LUNCH -->
+<div class="button-group" id="lunchButtons">
+
+<!-- ========================================= -->
+<!-- REPLACE THESE JAVASCRIPT FUNCTIONS -->
+<!-- ========================================= -->
 
 <script>
 
-function goBack(){
-
-resetAll();
-
-document.getElementById("mainPage").classList.remove("active");
-document.getElementById("landingPage").classList.add("active");
-
-}
-
-/* =============================================== */
-/* REPLACE YOUR EXISTING enterApp() FUNCTION */
-/* =============================================== */
+/* ---------- ENTER APP ---------- */
 
 function enterApp(user){
 
@@ -198,14 +205,29 @@ document.getElementById("activeUser").innerHTML=
 
 resetAll();
 
-document.getElementById("landingPage").classList.remove("active");
-document.getElementById("mainPage").classList.add("active");
+document.getElementById("landingPage")
+.classList.remove("active");
+
+document.getElementById("mainPage")
+.classList.add("active");
 
 }
 
-/* =============================================== */
-/* REPLACE YOUR selectMood FUNCTION */
-/* =============================================== */
+/* ---------- GO BACK ---------- */
+
+function goBack(){
+
+resetAll();
+
+document.getElementById("mainPage")
+.classList.remove("active");
+
+document.getElementById("landingPage")
+.classList.add("active");
+
+}
+
+/* ---------- MOOD ---------- */
 
 function selectMood(btn,mood){
 
@@ -218,9 +240,7 @@ selectedMood=mood;
 
 }
 
-/* =============================================== */
-/* REPLACE YOUR selectEnergy FUNCTION */
-/* =============================================== */
+/* ---------- ENERGY ---------- */
 
 function selectEnergy(btn,energy){
 
@@ -233,9 +253,7 @@ selectedEnergy=energy;
 
 }
 
-/* =============================================== */
-/* REPLACE YOUR selectLunch FUNCTION */
-/* =============================================== */
+/* ---------- LUNCH ---------- */
 
 function selectLunch(btn,val){
 
@@ -248,53 +266,7 @@ lunchNeeded=val;
 
 }
 
-/* =============================================== */
-/* ADD THIS BELOW YOUR EXISTING VARIABLES */
-/* =============================================== */
-
-const floatingQuotes=[
-
-"Some nights deserve fried rice.",
-
-"Comfort food is emotional planning.",
-
-"Health vs comfort: round 483.",
-
-"Balancing cravings and logistics.",
-
-"Some evenings are Maggi evenings.",
-
-"Paneer diplomacy in progress.",
-
-"Tonight’s biggest question.",
-
-"Leftovers are tomorrow’s problem."
-
-];
-
-/* =============================================== */
-/* ADD THIS NEW FUNCTION */
-/* =============================================== */
-
-function rotateQuotes(){
-
-const quote=document.getElementById("floatingQuote");
-
-let index=0;
-
-setInterval(()=>{
-
-index=(index+1)%floatingQuotes.length;
-
-quote.innerText=floatingQuotes[index];
-
-},4000);
-
-}
-
-/* =============================================== */
-/* REPLACE YOUR saveMeal FUNCTION */
-/* =============================================== */
+/* ---------- SAVE MEAL ---------- */
 
 function saveMeal(mealName){
 
@@ -311,7 +283,9 @@ if(todayMeal){
 
 if(todayMeal.name===mealName){
 
-alert("You already recorded this meal today 🍲");
+alert(
+"You already recorded this meal today 🍲"
+);
 
 return;
 
@@ -348,24 +322,4 @@ alert(mealName+" saved 🍲");
 
 }
 
-/* =============================================== */
-/* ADD THIS INSIDE window.onload */
-/* =============================================== */
-
-rotateQuotes();
-
 </script>
-
-<!-- ===================================================== -->
-<!-- IMPORTANT HTML FIXES -->
-<!-- REPLACE THESE BUTTON GROUP DIVS WITH IDs -->
-<!-- ===================================================== -->
-
-<!-- MOOD -->
-<div class="button-group" id="moodButtons">
-
-<!-- ENERGY -->
-<div class="button-group" id="energyButtons">
-
-<!-- LUNCH -->
-<div class="button-group" id="lunchButtons">
