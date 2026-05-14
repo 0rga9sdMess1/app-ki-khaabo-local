@@ -4,655 +4,188 @@ Concept by BanRap
 
 CHANGELOG
 
-Ver.1.2.0.15.05.2026.02.15.00
-- Added 2-page architecture
-- Minimal landing page added
-- Added floating theme switcher
-- Added modal About popup
-- Added recommendation thinking animation
-- Added smarter daily meal tracking
-- Added duplicate meal protection
-- Added Pav Bhaji
-- Added persistent theme system
-- Improved dark mode readability
+Ver.1.2.1.15.05.2026.03.05.00
+
+- Added warm glow behind title
+- Added animated steam effect
+- Added floating rotating food quotes
+- Improved landing page atmosphere
+- Fixed multiple button selection bug
+- Fixed back button reset behavior
+- Improved user badge visibility
+- Improved homepage spacing
+- Added cleaner compact back button
+- Improved duplicate meal handling
 -->
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Ki Khaabo?</title>
 
 <style>
 
-:root{
-  --bg:#f5f5f5;
-  --card:#ffffff;
-  --text:#111111;
-  --accent:#ff3b30;
-  --sub:#666666;
-  --button:#dddddd;
-}
+/* ADD THIS INSIDE YOUR EXISTING <style> SECTION */
 
-*{
-  box-sizing:border-box;
-}
+/* ---------- LANDING PAGE ENHANCEMENTS ---------- */
 
-body{
-  margin:0;
-  padding:0;
-  font-family:Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  transition:0.3s;
-}
-
-.page{
-  display:none;
-  min-height:100vh;
-}
-
-.active{
-  display:block;
-}
-
-.container{
-  max-width:550px;
-  margin:auto;
-  padding:20px;
-  padding-bottom:100px;
-}
-
-.landing{
+.title-wrapper{
+  position:relative;
   display:flex;
   flex-direction:column;
-  justify-content:center;
   align-items:center;
-  min-height:100vh;
-  text-align:center;
+  justify-content:center;
+  margin-bottom:10px;
 }
 
-.title{
-  font-size:48px;
-  font-weight:bold;
-}
-
-.subtitle{
-  margin-top:15px;
-  color:var(--sub);
-  line-height:1.7;
-}
-
-.card{
-  background:var(--card);
-  border-radius:22px;
-  padding:20px;
-  margin-top:18px;
-  box-shadow:0 5px 18px rgba(0,0,0,0.08);
-}
-
-.section-title{
-  font-size:19px;
-  font-weight:bold;
-  margin-bottom:14px;
-}
-
-.button-group{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-button{
-  border:none;
-  padding:14px;
-  border-radius:16px;
-  background:var(--button);
-  color:var(--text);
-  cursor:pointer;
-  font-size:15px;
-  transition:0.2s;
-  flex:1;
-  min-width:120px;
-  font-weight:bold;
-}
-
-button:hover{
-  transform:scale(1.03);
-}
-
-.selected{
-  background:var(--accent)!important;
-  color:white!important;
-}
-
-.primary-btn{
-  width:100%;
-  background:var(--accent);
-  color:white;
-  font-size:18px;
-  padding:16px;
-  margin-top:20px;
-}
-
-.reset-btn{
-  width:100%;
-  margin-top:10px;
-}
-
-.recommendation{
-  background:var(--card);
-  border-left:6px solid var(--accent);
-  border-radius:18px;
-  padding:18px;
-  margin-top:18px;
-  animation:fadeIn 0.5s ease;
-}
-
-.meal-title{
-  font-size:22px;
-  font-weight:bold;
-  margin-bottom:12px;
-}
-
-.reason{
-  line-height:1.6;
-  color:var(--sub);
-}
-
-.ate-btn{
-  margin-top:15px;
-  background:var(--accent);
-  color:white;
-}
-
-.history-item{
-  background:rgba(0,0,0,0.04);
-  padding:12px;
-  border-radius:12px;
-  margin-top:10px;
-}
-
-.footer-left{
-  position:fixed;
-  bottom:10px;
-  left:12px;
-  font-size:12px;
-  opacity:0.7;
-}
-
-.footer-right{
-  position:fixed;
-  bottom:10px;
-  right:12px;
-  font-size:12px;
-  opacity:0.7;
-}
-
-.theme-floating{
-  position:fixed;
-  top:18px;
-  right:18px;
-  width:52px;
-  height:52px;
+.title-glow{
+  position:absolute;
+  width:220px;
+  height:220px;
+  background:radial-gradient(circle, rgba(255,140,0,0.18), transparent 70%);
   border-radius:50%;
-  background:var(--card);
+  z-index:0;
+  filter:blur(12px);
+}
+
+.steam-container{
   display:flex;
-  justify-content:center;
-  align-items:center;
-  font-size:24px;
-  cursor:pointer;
-  box-shadow:0 4px 12px rgba(0,0,0,0.15);
-  z-index:100;
+  gap:8px;
+  margin-bottom:8px;
+  z-index:2;
 }
 
-.theme-popup{
-  position:fixed;
-  top:80px;
-  right:18px;
+.steam{
+  width:6px;
+  height:35px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.5);
+  animation:steamFloat 3s infinite ease-in-out;
+}
+
+.steam:nth-child(2){
+  animation-delay:0.5s;
+}
+
+.steam:nth-child(3){
+  animation-delay:1s;
+}
+
+@keyframes steamFloat{
+  0%{
+    transform:translateY(0px);
+    opacity:0.2;
+  }
+  50%{
+    transform:translateY(-10px);
+    opacity:0.7;
+  }
+  100%{
+    transform:translateY(-20px);
+    opacity:0;
+  }
+}
+
+.floating-quote{
+  margin-top:28px;
+  margin-bottom:28px;
+  font-size:15px;
+  color:var(--sub);
+  opacity:0;
+  animation:fadeQuote 4s infinite;
+  min-height:24px;
+  text-align:center;
+  padding:0 20px;
+  line-height:1.5;
+}
+
+@keyframes fadeQuote{
+  0%{
+    opacity:0;
+  }
+  15%{
+    opacity:1;
+  }
+  70%{
+    opacity:1;
+  }
+  100%{
+    opacity:0;
+  }
+}
+
+.user-badge{
   background:var(--card);
-  padding:15px;
-  border-radius:18px;
-  display:none;
-  z-index:100;
-  box-shadow:0 5px 20px rgba(0,0,0,0.15);
-}
-
-.theme-popup button{
-  width:100%;
-  margin-top:8px;
-}
-
-.top-bar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:10px;
+  padding:10px 16px;
+  border-radius:16px;
+  font-size:15px;
+  font-weight:bold;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
 
 .back-btn{
-  width:auto;
-  padding:10px 16px;
+  width:auto !important;
+  min-width:90px;
+  padding:10px 16px !important;
+  font-size:14px;
 }
 
 .about-link{
-  margin-top:25px;
-  color:var(--accent);
-  cursor:pointer;
-  font-weight:bold;
-}
-
-.modal{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.55);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:200;
-}
-
-.modal-content{
-  width:90%;
-  max-width:500px;
-  background:var(--card);
-  padding:25px;
-  border-radius:22px;
-  line-height:1.8;
-}
-
-.close-modal{
-  margin-top:20px;
-  width:100%;
-}
-
-.loader{
-  text-align:center;
-  margin-top:25px;
-  font-size:18px;
-  color:var(--sub);
-  animation:pulse 1s infinite;
-}
-
-@keyframes pulse{
-  0%{opacity:0.3;}
-  50%{opacity:1;}
-  100%{opacity:0.3;}
-}
-
-@keyframes fadeIn{
-  from{
-    opacity:0;
-    transform:translateY(10px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
+  margin-top:45px !important;
 }
 
 </style>
-</head>
 
-<body>
+<!-- ===================================================== -->
+<!-- REPLACE ONLY THE LANDING PAGE TITLE SECTION WITH THIS -->
+<!-- ===================================================== -->
 
-<div class="theme-floating" onclick="toggleThemePopup()">
-🎨
+<div class="title-wrapper">
+
+<div class="title-glow"></div>
+
+<div class="steam-container">
+<div class="steam"></div>
+<div class="steam"></div>
+<div class="steam"></div>
 </div>
 
-<div class="theme-popup" id="themePopup">
-<button onclick="setTheme('nothing')">Nothing Minimal</button>
-<button onclick="setTheme('warm')">Cozy Bengali</button>
-<button onclick="setTheme('sage')">Sage Calm</button>
-<button onclick="setTheme('dark')">Dark Dinner</button>
+<div class="title" style="position:relative;z-index:2;">
+Ki Khaabo?
 </div>
 
-<!-- PAGE 1 -->
-
-<div class="page active" id="landingPage">
-
-<div class="container landing">
-
-<div class="title">Ki Khaabo?</div>
+</div>
 
 <div class="subtitle">
 Balancing comfort, health,<br>
 leftovers and real life 🍲
 </div>
 
-<div class="card" style="width:100%;margin-top:40px;">
-
-<div class="section-title">
-Who’s checking dinner tonight?
+<div class="floating-quote" id="floatingQuote">
+Some nights deserve fried rice.
 </div>
 
-<div class="button-group">
-<button onclick="enterApp('Pranab')">Pranab</button>
-<button onclick="enterApp('Koyel')">Koyel</button>
+<!-- ================================================= -->
+<!-- REPLACE activeUser DIV IN PAGE 2 TOP BAR WITH THIS -->
+<!-- ================================================= -->
+
+<div class="user-badge" id="activeUser">
+🍲 Tonight: Pranab
 </div>
 
-</div>
-
-<div class="about-link" onclick="openAbout()">
-Why Ki Khaabo?
-</div>
-
-</div>
-
-</div>
-
-<!-- PAGE 2 -->
-
-<div class="page" id="mainPage">
-
-<div class="container">
-
-<div class="top-bar">
-
-<button class="back-btn" onclick="goBack()">
-← Back
-</button>
-
-<div>
-<strong id="activeUser"></strong>
-</div>
-
-</div>
-
-<div class="title" style="font-size:38px;margin-top:15px;">
-Ki Khaabo?
-</div>
-
-<div class="card">
-
-<div class="section-title">
-How’s today feeling?
-</div>
-
-<div class="button-group">
-<button onclick="selectMood(this,'comfort')">Comfort</button>
-<button onclick="selectMood(this,'healthy')">Healthy</button>
-<button onclick="selectMood(this,'tired')">Low Energy</button>
-<button onclick="selectMood(this,'exciting')">Something Different</button>
-</div>
-
-</div>
-
-<div class="card">
-
-<div class="section-title">
-Cooking energy?
-</div>
-
-<div class="button-group">
-<button onclick="selectEnergy(this,'low')">Minimal</button>
-<button onclick="selectEnergy(this,'medium')">Moderate</button>
-<button onclick="selectEnergy(this,'high')">Can Cook Properly</button>
-</div>
-
-</div>
-
-<div class="card">
-
-<div class="section-title">
-Tomorrow lunch needed?
-</div>
-
-<div class="button-group">
-<button onclick="selectLunch(this,true)">Yes</button>
-<button onclick="selectLunch(this,false)">No</button>
-</div>
-
-</div>
-
-<div class="card">
-
-<div class="section-title">
-Any prep already done?
-</div>
-
-<div class="button-group">
-<button onclick="togglePrep(this,'rice')">Rice Cooked</button>
-<button onclick="togglePrep(this,'oats')">Oats Soaked</button>
-<button onclick="togglePrep(this,'chila')">Chila Batter Ready</button>
-<button onclick="togglePrep(this,'veggies')">Veggies Boiled</button>
-</div>
-
-</div>
-
-<button class="primary-btn" onclick="generateRecommendations()">
-🍛 Tell Me What We Should Eat
-</button>
-
-<button class="reset-btn" onclick="resetAll()">
-Reset Choices
-</button>
-
-<div id="loader"></div>
-
-<div id="results"></div>
-
-<div class="card">
-
-<div class="section-title">
-Recent Meals
-</div>
-
-<div id="history"></div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- ABOUT MODAL -->
-
-<div class="modal" id="aboutModal">
-
-<div class="modal-content">
-
-<h2>🍲 Why Ki Khaabo Exists</h2>
-
-<p>
-Some nights you want comfort.
-</p>
-
-<p>
-Some nights you want health.
-</p>
-
-<p>
-Some nights you just want Maggi and silence.
-</p>
-
-<p>
-Ki Khaabo? was born from real dinner table confusion:
-“What should we eat tonight?”
-“Will this survive tomorrow lunch?”
-“Didn’t we just have paneer yesterday?”
-</p>
-
-<p>
-Between work, tiredness, moods, leftovers and cravings, food becomes less about recipes and more about emotional logistics.
-</p>
-
-<p>
-This app tries to help with that gently.
-</p>
-
-<button class="close-modal" onclick="closeAbout()">
-Close
-</button>
-
-</div>
-
-</div>
-
-<div class="footer-left">
-Concept by BanRap
-</div>
-
-<div class="footer-right">
-Ver.1.2.0.15.05.2026.02.15.00
-</div>
+<!-- =============================================== -->
+<!-- REPLACE YOUR EXISTING goBack() FUNCTION WITH THIS -->
+<!-- =============================================== -->
 
 <script>
 
-let selectedUser="";
-let selectedMood="";
-let selectedEnergy="";
-let lunchNeeded=false;
+function goBack(){
 
-const prepState={
-rice:false,
-oats:false,
-chila:false,
-veggies:false
-};
+resetAll();
 
-const meals=[
+document.getElementById("mainPage").classList.remove("active");
+document.getElementById("landingPage").classList.add("active");
 
-{
-name:"Egg Fried Rice",
-comfort:10,
-healthy:5,
-energy:"medium",
-lunch:false,
-prep:"rice",
-reasons:[
-"Both emotionally love it",
-"Perfect comfort meal",
-"Rice prep already done"
-]
-},
-
-{
-name:"Moong Dal Chila",
-comfort:8,
-healthy:10,
-energy:"medium",
-lunch:true,
-prep:"chila",
-reasons:[
-"Healthy and protein rich",
-"Excellent lunchbox support",
-"Fresh and satisfying"
-]
-},
-
-{
-name:"Pav Bhaji",
-comfort:10,
-healthy:5,
-energy:"high",
-lunch:true,
-prep:"veggies",
-reasons:[
-"Koyel speciality masterpiece",
-"Excellent emotional comfort food",
-"Works surprisingly well with rice next day",
-"Veggies already boiled"
-]
-},
-
-{
-name:"Bhindi Onion Sabzi + Fulka",
-comfort:9,
-healthy:7,
-energy:"medium",
-lunch:false,
-prep:"",
-reasons:[
-"Always emotionally satisfying",
-"Classic comfort dinner"
-]
-},
-
-{
-name:"Cauliflower Potato Dry Sabzi + Fulka",
-comfort:9,
-healthy:8,
-energy:"medium",
-lunch:true,
-prep:"",
-reasons:[
-"Strong lunch continuity",
-"Balanced comfort food"
-]
-},
-
-{
-name:"Paneer Green Peas Light Gravy",
-comfort:8,
-healthy:7,
-energy:"medium",
-lunch:true,
-prep:"",
-reasons:[
-"Koyel comfort favourite",
-"Excellent next-day lunch"
-]
-},
-
-{
-name:"Veg Pasta",
-comfort:8,
-healthy:5,
-energy:"high",
-lunch:true,
-prep:"",
-reasons:[
-"Different from regular sabzi",
-"Comfort-heavy meal"
-]
-},
-
-{
-name:"Pasta Aglio e Olio",
-comfort:9,
-healthy:3,
-energy:"medium",
-lunch:false,
-prep:"",
-reasons:[
-"One-time special comfort meal",
-"Perfect relaxed evening option"
-]
-},
-
-{
-name:"Veg Maggi",
-comfort:10,
-healthy:2,
-energy:"low",
-lunch:false,
-prep:"",
-reasons:[
-"Low-energy rescue food",
-"Minimal effort required"
-]
-},
-
-{
-name:"Egg Curry + Fulka",
-comfort:8,
-healthy:8,
-energy:"medium",
-lunch:true,
-prep:"",
-reasons:[
-"Excellent lunch support",
-"Protein-rich dinner"
-]
 }
 
-];
+/* =============================================== */
+/* REPLACE YOUR EXISTING enterApp() FUNCTION */
+/* =============================================== */
 
 function enterApp(user){
 
@@ -660,42 +193,23 @@ selectedUser=user;
 
 localStorage.setItem("lastUser",user);
 
-document.getElementById("activeUser").innerText=user;
+document.getElementById("activeUser").innerHTML=
+"🍲 Tonight: " + user;
+
+resetAll();
 
 document.getElementById("landingPage").classList.remove("active");
 document.getElementById("mainPage").classList.add("active");
 
 }
 
-function goBack(){
-
-document.getElementById("mainPage").classList.remove("active");
-document.getElementById("landingPage").classList.add("active");
-
-}
-
-function toggleThemePopup(){
-
-const popup=document.getElementById("themePopup");
-
-popup.style.display=
-popup.style.display==="block"
-? "none"
-: "block";
-
-}
-
-function openAbout(){
-document.getElementById("aboutModal").style.display="flex";
-}
-
-function closeAbout(){
-document.getElementById("aboutModal").style.display="none";
-}
+/* =============================================== */
+/* REPLACE YOUR selectMood FUNCTION */
+/* =============================================== */
 
 function selectMood(btn,mood){
 
-document.querySelectorAll(".card:nth-of-type(1) button")
+document.querySelectorAll("#moodButtons button")
 .forEach(b=>b.classList.remove("selected"));
 
 btn.classList.add("selected");
@@ -704,9 +218,13 @@ selectedMood=mood;
 
 }
 
+/* =============================================== */
+/* REPLACE YOUR selectEnergy FUNCTION */
+/* =============================================== */
+
 function selectEnergy(btn,energy){
 
-document.querySelectorAll(".card:nth-of-type(2) button")
+document.querySelectorAll("#energyButtons button")
 .forEach(b=>b.classList.remove("selected"));
 
 btn.classList.add("selected");
@@ -715,9 +233,13 @@ selectedEnergy=energy;
 
 }
 
+/* =============================================== */
+/* REPLACE YOUR selectLunch FUNCTION */
+/* =============================================== */
+
 function selectLunch(btn,val){
 
-document.querySelectorAll(".card:nth-of-type(3) button")
+document.querySelectorAll("#lunchButtons button")
 .forEach(b=>b.classList.remove("selected"));
 
 btn.classList.add("selected");
@@ -726,118 +248,53 @@ lunchNeeded=val;
 
 }
 
-function togglePrep(btn,key){
+/* =============================================== */
+/* ADD THIS BELOW YOUR EXISTING VARIABLES */
+/* =============================================== */
 
-prepState[key]=!prepState[key];
+const floatingQuotes=[
 
-if(prepState[key]){
-btn.classList.add("selected");
-}else{
-btn.classList.remove("selected");
-}
+"Some nights deserve fried rice.",
 
-}
+"Comfort food is emotional planning.",
 
-function generateRecommendations(){
+"Health vs comfort: round 483.",
 
-document.getElementById("results").innerHTML="";
+"Balancing cravings and logistics.",
 
-const loader=document.getElementById("loader");
+"Some evenings are Maggi evenings.",
 
-loader.innerHTML=`
-<div class="loader">
-Consulting the dinner gods... 🍲
-</div>
-`;
+"Paneer diplomacy in progress.",
 
-setTimeout(()=>{
+"Tonight’s biggest question.",
 
-loader.innerHTML="";
+"Leftovers are tomorrow’s problem."
 
-let history=
-JSON.parse(localStorage.getItem("mealHistory")||"[]");
+];
 
-let scoredMeals=meals.map(meal=>{
+/* =============================================== */
+/* ADD THIS NEW FUNCTION */
+/* =============================================== */
 
-let score=0;
+function rotateQuotes(){
 
-if(selectedMood==="comfort") score+=meal.comfort;
-if(selectedMood==="healthy") score+=meal.healthy;
+const quote=document.getElementById("floatingQuote");
 
-if(selectedMood==="tired" && meal.energy==="low"){
-score+=12;
-}
+let index=0;
 
-if(selectedEnergy===meal.energy){
-score+=8;
-}
+setInterval(()=>{
 
-if(lunchNeeded && meal.lunch){
-score+=10;
-}
+index=(index+1)%floatingQuotes.length;
 
-if(meal.prep && prepState[meal.prep]){
-score+=12;
-}
+quote.innerText=floatingQuotes[index];
 
-if(selectedUser==="Koyel"){
-if(meal.name.includes("Paneer")) score+=5;
-if(meal.name.includes("Egg")) score-=2;
-}
-
-if(selectedUser==="Pranab"){
-if(meal.name.includes("Egg")) score+=5;
-}
-
-history.forEach(oldMeal=>{
-if(oldMeal.name===meal.name){
-score-=18;
-}
-});
-
-return{
-...meal,
-score
-};
-
-});
-
-scoredMeals.sort((a,b)=>b.score-a.score);
-
-const top=scoredMeals.slice(0,3);
-
-const results=document.getElementById("results");
-
-top.forEach((meal,index)=>{
-
-let div=document.createElement("div");
-
-div.className="recommendation";
-
-div.innerHTML=`
-
-<div class="meal-title">
-${index===0?"🥇":index===1?"🥈":"🥉"} ${meal.name}
-</div>
-
-<div class="reason">
-${meal.reasons.map(r=>"• "+r).join("<br>")}
-</div>
-
-<button class="ate-btn"
-onclick='saveMeal("${meal.name}")'>
-We Ate This
-</button>
-
-`;
-
-results.appendChild(div);
-
-});
-
-},1600);
+},4000);
 
 }
+
+/* =============================================== */
+/* REPLACE YOUR saveMeal FUNCTION */
+/* =============================================== */
 
 function saveMeal(mealName){
 
@@ -851,6 +308,14 @@ const todayMeal=
 history.find(m=>m.day===today);
 
 if(todayMeal){
+
+if(todayMeal.name===mealName){
+
+alert("You already recorded this meal today 🍲");
+
+return;
+
+}
 
 const replace=
 confirm(
@@ -883,130 +348,24 @@ alert(mealName+" saved 🍲");
 
 }
 
-function renderHistory(){
+/* =============================================== */
+/* ADD THIS INSIDE window.onload */
+/* =============================================== */
 
-const history=
-JSON.parse(localStorage.getItem("mealHistory")||"[]");
-
-const div=document.getElementById("history");
-
-if(history.length===0){
-
-div.innerHTML="No meals recorded yet.";
-
-return;
-
-}
-
-div.innerHTML="";
-
-history.forEach(item=>{
-
-let row=document.createElement("div");
-
-row.className="history-item";
-
-row.innerHTML=`
-<strong>${item.name}</strong><br>
-<small>${item.date}</small>
-`;
-
-div.appendChild(row);
-
-});
-
-}
-
-function resetAll(){
-
-selectedMood="";
-selectedEnergy="";
-lunchNeeded=false;
-
-prepState.rice=false;
-prepState.oats=false;
-prepState.chila=false;
-prepState.veggies=false;
-
-document.querySelectorAll(".selected")
-.forEach(el=>el.classList.remove("selected"));
-
-document.getElementById("results").innerHTML="";
-document.getElementById("loader").innerHTML="";
-
-}
-
-function setTheme(theme){
-
-if(theme==="nothing"){
-
-document.documentElement.style.setProperty('--bg','#f5f5f5');
-document.documentElement.style.setProperty('--card','#ffffff');
-document.documentElement.style.setProperty('--text','#111111');
-document.documentElement.style.setProperty('--accent','#ff3b30');
-document.documentElement.style.setProperty('--sub','#666666');
-document.documentElement.style.setProperty('--button','#dddddd');
-
-}
-
-if(theme==="warm"){
-
-document.documentElement.style.setProperty('--bg','#fff5e8');
-document.documentElement.style.setProperty('--card','#ffffff');
-document.documentElement.style.setProperty('--text','#4a2c1a');
-document.documentElement.style.setProperty('--accent','#ff8a00');
-document.documentElement.style.setProperty('--sub','#7a5a45');
-document.documentElement.style.setProperty('--button','#f2d2a8');
-
-}
-
-if(theme==="sage"){
-
-document.documentElement.style.setProperty('--bg','#eef5ef');
-document.documentElement.style.setProperty('--card','#ffffff');
-document.documentElement.style.setProperty('--text','#233325');
-document.documentElement.style.setProperty('--accent','#5c8d5c');
-document.documentElement.style.setProperty('--sub','#607060');
-document.documentElement.style.setProperty('--button','#d9e7da');
-
-}
-
-if(theme==="dark"){
-
-document.documentElement.style.setProperty('--bg','#181818');
-document.documentElement.style.setProperty('--card','#242424');
-document.documentElement.style.setProperty('--text','#f5f5f5');
-document.documentElement.style.setProperty('--accent','#d4a017');
-document.documentElement.style.setProperty('--sub','#bbbbbb');
-document.documentElement.style.setProperty('--button','#333333');
-
-}
-
-localStorage.setItem("theme",theme);
-
-}
-
-window.onload=function(){
-
-renderHistory();
-
-const savedTheme=
-localStorage.getItem("theme");
-
-if(savedTheme){
-setTheme(savedTheme);
-}
-
-const lastUser=
-localStorage.getItem("lastUser");
-
-if(lastUser){
-document.getElementById("activeUser").innerText=lastUser;
-}
-
-};
+rotateQuotes();
 
 </script>
 
-</body>
-</html>
+<!-- ===================================================== -->
+<!-- IMPORTANT HTML FIXES -->
+<!-- REPLACE THESE BUTTON GROUP DIVS WITH IDs -->
+<!-- ===================================================== -->
+
+<!-- MOOD -->
+<div class="button-group" id="moodButtons">
+
+<!-- ENERGY -->
+<div class="button-group" id="energyButtons">
+
+<!-- LUNCH -->
+<div class="button-group" id="lunchButtons">
